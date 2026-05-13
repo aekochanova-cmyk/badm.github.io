@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Первенство МИФИ | Турнир</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #bfbfdb;
+            padding: 20px 12px 40px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+        .card-header {
+            background: #0b0829;
+            color: white;
+            padding: 16px 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .card-body { padding: 20px; }
+        .group-container {
+            background: #fefefe;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            border: 1px solid #e0ddf5;
+        }
+        .group-title-bar {
+            background: #eae9fc;
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .table-wrapper { overflow-x: auto; padding: 16px; }
+        .tournament-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 500px;
+        }
+        .tournament-table th, .tournament-table td {
+            border: 1px solid #d4d4e0;
+            padding: 10px 8px;
+            text-align: center;
+        }
+        .tournament-table th { background: #f5f4ff; font-weight: 700; }
+        .player-col { font-weight: 700; background: #faf9ff; text-align: left !important; }
+        .win-cell { background-color: #c8f0d1 !important; }
+        .stats-col { background: #f5f3ff; font-weight: 600; }
+        .bracket-container { display: flex; flex-direction: column; gap: 24px; }
+        .bracket-stage { background: #faf9ff; border-radius: 24px; padding: 16px; }
+        .stage-title { font-weight: 800; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid #0b0829; }
+        .matches-list { display: flex; flex-direction: column; gap: 16px; }
+        .match-card { background: white; border-radius: 20px; padding: 14px; border: 1px solid #e2defc; }
+        .match-players-row { display: flex; gap: 12px; justify-content: space-between; margin-bottom: 10px; }
+        .match-players-row span { flex: 1; text-align: center; font-weight: 600; }
+        .match-score-row span { display: block; text-align: center; background: #f1efff; padding: 8px; border-radius: 30px; font-family: monospace; }
+        .winner-badge { background: #0b0829; color: white; padding: 6px; border-radius: 40px; text-align: center; font-size: 0.75rem; }
+        .refresh-panel {
+            background: #f8f7fc;
+            border-radius: 32px;
+            padding: 18px;
+            margin-bottom: 24px;
+            border: 2px solid #cbc8e0;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #0b0829;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .status { font-size: 0.75rem; margin-top: 10px; padding: 6px; border-radius: 30px; }
+        .status-success { background: #d4e0b2; color: #2b6e3c; }
+        .status-error { background: #f0d6d6; color: #b91c1c; }
+        .last-update { font-size: 0.7rem; color: #5a5578; margin-top: 8px; }
+        @media (min-width: 768px) { .bracket-container { flex-direction: row; flex-wrap: wrap; } .bracket-stage { flex: 1; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 2.2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Первенство МИФИ</h1>
+        <p style="color: #4a457a;">Актуальные результаты турнира</p>
+    </div>
+
+    <div class="refresh-panel">
+        <button id="refreshBtn" class="btn-primary">🔄 Обновить данные</button>
+        <div id="status" class="status"></div>
+        <div id="lastUpdate" class="last-update"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">🏸 Мужской одиночный разряд · Групповой этап</div>
+        <div class="card
