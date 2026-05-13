@@ -123,6 +123,7 @@
         }
         .status { font-size: 0.75rem; margin-top: 10px; padding: 6px; border-radius: 30px; }
         .status-success { background: #d4e0b2; color: #2b6e3c; }
+        .status-error { background: #f0d6d6; color: #b91c1c; }
         .admin-bar {
             background: #2b6e3c;
             color: white;
@@ -155,12 +156,7 @@
         <div class="admin-bar">
             <span>✏️ Режим редактирования</span>
             <button id="logoutBtn" class="btn-primary" style="background:#8b5e3c;">Выйти</button>
-        </div>
-        
-        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
-            <button id="downloadDataBtn" class="btn-primary btn-green">💾 Скачать данные (JSON)</button>
-            <button id="uploadDataBtn" class="btn-primary">📂 Загрузить данные из файла</button>
-            <input type="file" id="fileInput" accept=".json" style="display:none;">
+            <button id="saveBtn" class="btn-primary btn-green">💾 Сохранить на сервер</button>
         </div>
         <div id="adminStatus" class="status" style="text-align:center;"></div>
 
@@ -193,18 +189,14 @@
             </div>
             <div class="card-body"><div id="femaleBracket" class="bracket-container"></div></div>
         </div>
-        
-        <div style="text-align: center; margin-top: 20px; padding: 16px; background: #f8f7fc; border-radius: 32px;">
-            <p style="color: #4a457a;"><strong>📌 Как обновить сайт:</strong></p>
-            <p>1. Внесите изменения выше<br>2. Нажмите "Скачать данные (JSON)"<br>3. В репозитории GitHub замените файл <strong>data.json</strong> на скачанный<br>4. Участники увидят обновления при нажатии "Обновить данные"</p>
-        </div>
     </div>
 </div>
 
 <script>
     let maleGroups = [], femaleGroups = [], maleBracketStages = [], femaleBracketStages = [];
     let isAdmin = false;
-    
+    const API_URL = window.location.origin;
+
     function determineWinner(scoreStr) {
         if (!scoreStr) return null;
         let parts = scoreStr.split(',').map(s => s.trim());
@@ -220,7 +212,7 @@
         if (p2Wins > p1Wins) return 2;
         return null;
     }
-    
+
     function calcStats(group) {
         if (!group.players) return [];
         return group.players.map((_, i) => {
@@ -244,15 +236,15 @@
             return { wins, diff, totalGames: group.players.length - 1 };
         });
     }
-    
+
     function createEmptyGroup(name) { return { name: name, players: [], scores: [] }; }
     function addPlayerToGroup(group, name) { group.players.push(name); group.scores.forEach(r => r.push('')); group.scores.push(Array(group.players.length).fill('')); for(let i=0;i<group.players.length;i++) group.scores[i][i] = ''; }
     function removePlayerFromGroup(group, idx) { group.players.splice(idx,1); group.scores.splice(idx,1); for(let i=0;i<group.scores.length;i++) group.scores[i].splice(idx,1); }
     function initEmptyBracket() { return [{ name: "Четвертьфиналы", matches: [] }, { name: "Полуфиналы", matches: [] }, { name: "Финал / 3 место", matches: [] }]; }
-    
+
     function renderAll() { if(isAdmin) { renderGroups('maleGroupsContainer', maleGroups, true); renderGroups('femaleGroupsContainer', femaleGroups, false); renderBracket('maleBracket', maleBracketStages); renderBracket('femaleBracket', femaleBracketStages); } }
     function refreshAll() { if(isAdmin) renderAll(); }
-    
+
     function renderGroups(containerId, groups, isMale) {
         let container = document.getElementById(containerId); if(!container) return;
         container.innerHTML = '';
@@ -294,7 +286,7 @@
         });
     }
     function createTh(t) { let th = document.createElement('th'); th.textContent=t; return th; }
-    
+
     function renderBracket(containerId, bracketData) {
         let container = document.getElementById(containerId); if(!container) return;
         container.innerHTML = '';
@@ -313,60 +305,51 @@
         document.querySelectorAll(`#${containerId} input[data-s]`).forEach(inp => { inp.onchange = (e) => { let s=parseInt(e.target.dataset.s), m=parseInt(e.target.dataset.m), f=e.target.dataset.f; if(bracketData[s]?.matches[m]) bracketData[s].matches[m][f]=e.target.value; }; });
         document.querySelectorAll(`#${containerId} button[data-s][data-m]`).forEach(btn => { btn.onclick = (e) => { let s=parseInt(btn.dataset.s), m=parseInt(btn.dataset.m); if(bracketData[s]) bracketData[s].matches.splice(m,1); renderBracket(containerId, bracketData); }; });
     }
-    
+
     function escapeHtml(s) { if(!s) return ''; return String(s).replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
     function addGroup(isMale) { let g = createEmptyGroup(`Группа ${(isMale?maleGroups.length+1:femaleGroups.length+1)}`); if(isMale) maleGroups.push(g); else femaleGroups.push(g); refreshAll(); }
     function addMatch(isMale) { let b = isMale ? maleBracketStages : femaleBracketStages; if(b[0]) b[0].matches.push({ p1:"", p2:"", score:"", winner:"" }); refreshAll(); }
-    
-    function downloadData() {
-        const data = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages, lastUpdate: new Date().toLocaleString() };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'data.json';
-        a.click();
-        URL.revokeObjectURL(url);
-        document.getElementById('adminStatus').innerHTML = '✅ Файл data.json скачан! Замените им файл в репозитории.';
-        document.getElementById('adminStatus').className = 'status status-success';
-        setTimeout(() => { let st = document.getElementById('adminStatus'); if(st) st.innerHTML = ''; }, 4000);
+
+    async function loadFromServer() {
+        try {
+            const response = await fetch(`${API_URL}/api/data`);
+            const data = await response.json();
+            maleGroups = data.maleGroups;
+            femaleGroups = data.femaleGroups;
+            maleBracketStages = data.maleBracketStages;
+            femaleBracketStages = data.femaleBracketStages;
+            refreshAll();
+            return true;
+        } catch(e) { return false; }
     }
-    
-    function uploadData(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                maleGroups = data.maleGroups || [];
-                femaleGroups = data.femaleGroups || [];
-                maleBracketStages = data.maleBracketStages || initEmptyBracket();
-                femaleBracketStages = data.femaleBracketStages || initEmptyBracket();
-                refreshAll();
-                document.getElementById('adminStatus').innerHTML = '✅ Данные загружены! Не забудьте скачать и заменить data.json в репозитории.';
-                document.getElementById('adminStatus').className = 'status status-success';
-            } catch(err) {
-                document.getElementById('adminStatus').innerHTML = '❌ Ошибка: неверный формат файла';
-                document.getElementById('adminStatus').className = 'status status-error';
-            }
-        };
-        reader.readAsText(file);
+
+    async function saveToServer() {
+        const data = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages };
+        const response = await fetch(`${API_URL}/api/data`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: 'BDMEPHI2026', data })
+        });
+        if (response.ok) {
+            document.getElementById('adminStatus').innerHTML = '✅ Сохранено на сервер! Участники увидят изменения.';
+            document.getElementById('adminStatus').className = 'status status-success';
+            setTimeout(() => { let st = document.getElementById('adminStatus'); if(st) st.innerHTML = ''; }, 3000);
+        } else {
+            document.getElementById('adminStatus').innerHTML = '❌ Ошибка сохранения';
+            document.getElementById('adminStatus').className = 'status status-error';
+        }
     }
-    
+
     function setAdmin(enable) {
         isAdmin = enable;
         document.getElementById('loginPanel').classList.toggle('hidden', enable);
         document.getElementById('adminPanel').classList.toggle('hidden', !enable);
-        if(enable) {
-            maleGroups = []; femaleGroups = []; maleBracketStages = initEmptyBracket(); femaleBracketStages = initEmptyBracket();
-            refreshAll();
-        }
+        if(enable) { loadFromServer(); }
     }
-    
+
     document.getElementById('enterBtn').onclick = () => { if(document.getElementById('codeInput').value === 'BDMEPHI2026') setAdmin(true); else { let st=document.getElementById('loginStatus'); st.innerHTML='❌ Неверный код'; st.className='status status-error'; setTimeout(()=>st.innerHTML='',3000); } };
     document.getElementById('logoutBtn').onclick = () => setAdmin(false);
-    document.getElementById('downloadDataBtn').onclick = downloadData;
-    document.getElementById('uploadDataBtn').onclick = () => document.getElementById('fileInput').click();
-    document.getElementById('fileInput').onchange = (e) => { if(e.target.files[0]) uploadData(e.target.files[0]); };
+    document.getElementById('saveBtn').onclick = saveToServer;
     document.getElementById('addMaleGroupBtn').onclick = () => addGroup(true);
     document.getElementById('addFemaleGroupBtn').onclick = () => addGroup(false);
     document.getElementById('addMaleMatchBtn').onclick = () => addMatch(true);
