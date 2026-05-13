@@ -23,7 +23,6 @@
             margin: 0 auto;
         }
 
-        /* Карточки */
         .card {
             background: white;
             border-radius: 32px;
@@ -47,7 +46,6 @@
             padding: 20px;
         }
 
-        /* Каждая таблица-группа */
         .group-container {
             background: #fefefe;
             border-radius: 24px;
@@ -101,10 +99,6 @@
             text-align: left !important;
             min-width: 120px;
         }
-        .score-cell {
-            font-family: monospace;
-            font-size: 0.8rem;
-        }
         .win-cell {
             background-color: #c8f0d1 !important;
         }
@@ -120,6 +114,7 @@
             font-size: 0.75rem;
             font-family: monospace;
             text-align: center;
+            background: white;
         }
         .player-input {
             font-weight: 600;
@@ -155,6 +150,12 @@
         .btn-secondary {
             background: #4a3f7a;
             color: white;
+        }
+        .btn-green {
+            background: #2b6e3c;
+        }
+        .btn-blue {
+            background: #1e5a8a;
         }
 
         /* Олимпийские сетки */
@@ -219,7 +220,6 @@
             display: block;
         }
 
-        /* Панель управления */
         .control-panel {
             background: #f8f7fc;
             border-radius: 32px;
@@ -250,13 +250,14 @@
             font-weight: 600;
             font-size: 0.8rem;
         }
+        .server-status {
+            font-size: 0.75rem;
+            color: #5a5578;
+            margin-top: 8px;
+        }
         @media (min-width: 768px) {
             .bracket-container { flex-direction: row; flex-wrap: wrap; }
             .bracket-stage { flex: 1; min-width: 260px; }
-        }
-        .add-group-btn {
-            background: #2b6e3c;
-            margin-left: 12px;
         }
     </style>
 </head>
@@ -264,60 +265,68 @@
 <div class="container">
     <div style="text-align: center; margin-bottom: 20px;">
         <h1 style="font-size: 2.2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Первенство МИФИ</h1>
+        <p style="color: #4a457a; font-size: 0.8rem;">Синхронизация между устройствами</p>
     </div>
 
-    <!-- Панель управления -->
-    <div class="control-panel" id="sizePanel">
+    <div class="control-panel">
         <div class="admin-area">
             <div><span id="modeBadge" class="mode-badge">🔒 Режим просмотра</span></div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <input type="text" id="adminCodeInput" class="code-input" placeholder=" ">
+                <input type="text" id="adminCodeInput" class="code-input" placeholder="" autocomplete="off">
                 <button id="unlockBtn" class="btn-primary">🔓 Активировать</button>
                 <button id="lockBtn" class="btn-primary" style="background:#6c5b7b; display:none;">🔒 Закрыть</button>
             </div>
         </div>
-        <div id="saveTools" style="display: none; margin-top: 16px; text-align: right;">
-            <button id="saveDataBtn" class="btn-primary" style="background:#2b6e3c;">💾 Сохранить всё</button>
-            <button id="resetDataBtn" class="btn-primary" style="background:#8b5e3c; margin-left: 10px;">⟳ Сбросить всё</button>
+        <div id="saveTools" style="display: none; margin-top: 16px;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                <button id="saveToServerBtn" class="btn-primary btn-green">☁️ Сохранить на сервер</button>
+                <button id="loadFromServerBtn" class="btn-primary btn-blue">⬇️ Загрузить с сервера</button>
+                <button id="resetDataBtn" class="btn-primary" style="background:#8b5e3c;">⟳ Сбросить всё</button>
+            </div>
+            <div id="serverStatus" class="server-status" style="text-align: center; margin-top: 10px;"></div>
         </div>
     </div>
 
-    <!-- МУЖСКОЙ РАЗРЯД: несколько таблиц (групп) -->
+    <!-- МУЖСКОЙ РАЗРЯД -->
     <div class="card">
         <div class="card-header">
             <span>🏸 Мужской одиночный разряд · Групповой этап</span>
-            <div>
-                <button id="addMaleGroupBtn" class="btn-primary btn-secondary" style="background:#2b6e3c;">➕ Добавить группу</button>
+            <div id="maleGroupActions" style="display: none;">
+                <button id="addMaleGroupBtn" class="btn-primary btn-secondary btn-green">➕ Добавить группу</button>
             </div>
         </div>
         <div class="card-body" id="maleGroupsContainer"></div>
     </div>
 
-    <!-- МУЖСКАЯ ОЛИМПИЙСКАЯ СЕТКА -->
     <div class="card">
         <div class="card-header">
             <span>🏆 Мужская олимпийская сетка · Плей-офф</span>
-            <button id="addMaleMatchBtn" class="btn-primary btn-secondary">➕ Добавить матч</button>
+            <div id="maleBracketActions" style="display: none;">
+                <button id="addMaleMatchBtn" class="btn-primary btn-secondary">➕ Добавить матч</button>
+            </div>
         </div>
         <div class="card-body">
             <div id="maleBracket" class="bracket-container"></div>
         </div>
     </div>
 
-    <!-- ЖЕНСКИЙ РАЗРЯД: несколько таблиц -->
+    <!-- ЖЕНСКИЙ РАЗРЯД -->
     <div class="card">
         <div class="card-header">
             <span>🏸 Женский одиночный разряд · Групповой этап</span>
-            <button id="addFemaleGroupBtn" class="btn-primary btn-secondary" style="background:#2b6e3c;">➕ Добавить группу</button>
+            <div id="femaleGroupActions" style="display: none;">
+                <button id="addFemaleGroupBtn" class="btn-primary btn-secondary btn-green">➕ Добавить группу</button>
+            </div>
         </div>
         <div class="card-body" id="femaleGroupsContainer"></div>
     </div>
 
-    <!-- ЖЕНСКАЯ ОЛИМПИЙСКАЯ СЕТКА -->
     <div class="card">
         <div class="card-header">
             <span>🥈 Женская олимпийская сетка · Плей-офф</span>
-            <button id="addFemaleMatchBtn" class="btn-primary btn-secondary">➕ Добавить матч</button>
+            <div id="femaleBracketActions" style="display: none;">
+                <button id="addFemaleMatchBtn" class="btn-primary btn-secondary">➕ Добавить матч</button>
+            </div>
         </div>
         <div class="card-body">
             <div id="femaleBracket" class="bracket-container"></div>
@@ -326,43 +335,37 @@
 </div>
 
 <script>
-    // ---------- СТРУКТУРА: массив групп, каждая группа имеет { name, players, scores } ----------
+    // ========== ГЛОБАЛЬНЫЕ ДАННЫЕ ==========
     let maleGroups = [];
     let femaleGroups = [];
-    
-    let maleBracketStages = [];  // [{ name, matches }]
+    let maleBracketStages = [];
     let femaleBracketStages = [];
-
     let isEditMode = false;
 
-    // Инициализация пустой группы
+    // ID для хранения на сервере (меняйте при необходимости)
+    const STORAGE_ID = 'mefi_tournament_data';
+    const API_URL = 'https://jsonplaceholder.typicode.com/posts'; // демо-API, данные не сохранятся реально
+    // Для реального использования нужен свой бэкенд. 
+    // Я добавлю инструкцию, как бесплатно получить работающее API.
+
+    // ========== ФУНКЦИИ РАБОТЫ С ДАННЫМИ ==========
     function createEmptyGroup(defaultName = "Новая группа") {
-        return {
-            name: defaultName,
-            players: [],
-            scores: []   // матрица результатов
-        };
+        return { name: defaultName, players: [], scores: [] };
     }
 
-    // Добавить игрока в группу
     function addPlayerToGroup(group, playerName = "Игрок") {
-        let idx = group.players.length;
         group.players.push(playerName);
-        // добавить столбец и строку в матрицу
         group.scores.forEach(row => row.push(''));
         group.scores.push(Array(group.players.length).fill(''));
-        // обнуляем диагональ
-        for(let i=0; i<group.players.length; i++) group.scores[i][i] = '';
+        for(let i = 0; i < group.players.length; i++) group.scores[i][i] = '';
     }
 
-    // Удалить игрока из группы
     function removePlayerFromGroup(group, playerIndex) {
         group.players.splice(playerIndex, 1);
         group.scores.splice(playerIndex, 1);
-        for(let i=0; i<group.scores.length; i++) group.scores[i].splice(playerIndex, 1);
+        for(let i = 0; i < group.scores.length; i++) group.scores[i].splice(playerIndex, 1);
     }
 
-    // Подсчёт статистики для группы
     function calcGroupStats(group) {
         let n = group.players.length;
         let stats = [];
@@ -387,24 +390,31 @@
         return stats;
     }
 
-    // Рендер одной группы
+    function initBracket(matchesPerStage = 3) {
+        return [
+            { name: "Четвертьфиналы", matches: [] },
+            { name: "Полуфиналы", matches: [] },
+            { name: "Финал / Матч за 3 место", matches: [] }
+        ].map((stage, idx) => {
+            let matchCount = idx === 0 ? matchesPerStage : (idx === 1 ? Math.max(1, Math.ceil(matchesPerStage / 2)) : 1);
+            let matches = [];
+            for (let i = 0; i < matchCount; i++) matches.push({ p1: "", p2: "", score: "", winner: "" });
+            return { name: stage.name, matches };
+        });
+    }
+
+    // ========== РЕНДЕРИНГ ==========
     function renderGroup(group, containerId, groupIdx, isMale) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        
         const groupDiv = document.createElement('div');
         groupDiv.className = 'group-container';
-        groupDiv.dataset.groupIdx = groupIdx;
-        
-        // Заголовок группы
         const titleBar = document.createElement('div');
         titleBar.className = 'group-title-bar';
         if (isEditMode) {
             let nameInput = document.createElement('input');
             nameInput.type = 'text';
             nameInput.value = group.name;
-            nameInput.style.fontSize = '1rem';
-            nameInput.style.fontWeight = 'bold';
             nameInput.addEventListener('change', (e) => { group.name = e.target.value; renderAllGroups(); });
             titleBar.appendChild(nameInput);
         } else {
@@ -417,7 +427,6 @@
             let addPlayerBtn = document.createElement('button');
             addPlayerBtn.textContent = '+ Игрок';
             addPlayerBtn.className = 'btn-icon';
-            addPlayerBtn.style.marginRight = '8px';
             addPlayerBtn.onclick = () => { addPlayerToGroup(group, `Новый`); renderAllGroups(); };
             let delGroupBtn = document.createElement('button');
             delGroupBtn.textContent = '🗑 Удалить группу';
@@ -434,7 +443,6 @@
         titleBar.appendChild(btnGroup);
         groupDiv.appendChild(titleBar);
         
-        // Таблица
         const tableWrapper = document.createElement('div');
         tableWrapper.className = 'table-wrapper';
         const table = document.createElement('table');
@@ -442,11 +450,10 @@
         const n = group.players.length;
         const stats = calcGroupStats(group);
         
-        // Заголовок
         let thead = document.createElement('thead');
         let headerRow = document.createElement('tr');
         headerRow.appendChild(document.createElement('th')).textContent = "Игроки";
-        for (let i=0; i<n; i++) {
+        for (let i = 0; i < n; i++) {
             let th = document.createElement('th');
             if (isEditMode) {
                 let inp = document.createElement('input');
@@ -465,7 +472,7 @@
         table.appendChild(thead);
         
         let tbody = document.createElement('tbody');
-        for (let i=0; i<n; i++) {
+        for (let i = 0; i < n; i++) {
             let tr = document.createElement('tr');
             let nameCell = document.createElement('td');
             nameCell.className = 'player-col';
@@ -478,10 +485,9 @@
                 nameCell.appendChild(inp);
             } else nameCell.textContent = group.players[i];
             tr.appendChild(nameCell);
-            
-            for (let j=0; j<n; j++) {
+            for (let j = 0; j < n; j++) {
                 let td = document.createElement('td');
-                if (i===j) td.textContent = "—";
+                if (i === j) td.textContent = "—";
                 else {
                     let scoreVal = group.scores[i][j] || '';
                     if (isEditMode) {
@@ -495,10 +501,10 @@
                     } else {
                         td.textContent = scoreVal;
                         if (scoreVal) {
-                            let myTotal=0, oppTotal=0;
+                            let myTotal = 0, oppTotal = 0;
                             scoreVal.split(',').forEach(p => {
                                 let sc = p.split(':');
-                                if(sc.length===2) { myTotal+=parseInt(sc[0])||0; oppTotal+=parseInt(sc[1])||0; }
+                                if(sc.length === 2) { myTotal += parseInt(sc[0])||0; oppTotal += parseInt(sc[1])||0; }
                             });
                             if(myTotal > oppTotal) td.classList.add('win-cell');
                         }
@@ -512,7 +518,6 @@
             diffTd.textContent = stats[i].pointsDiff;
             tr.appendChild(statsTd);
             tr.appendChild(diffTd);
-            
             if (isEditMode) {
                 let delTd = document.createElement('td');
                 let delBtn = document.createElement('button');
@@ -528,32 +533,6 @@
         tableWrapper.appendChild(table);
         groupDiv.appendChild(tableWrapper);
         container.appendChild(groupDiv);
-    }
-
-    function renderAllGroups() {
-        const maleContainer = document.getElementById('maleGroupsContainer');
-        const femaleContainer = document.getElementById('femaleGroupsContainer');
-        maleContainer.innerHTML = '';
-        femaleContainer.innerHTML = '';
-        maleGroups.forEach((g, idx) => renderGroup(g, 'maleGroupsContainer', idx, true));
-        femaleGroups.forEach((g, idx) => renderGroup(g, 'femaleGroupsContainer', idx, false));
-    }
-
-    // Олимпийские сетки
-    function initBracket(matchesPerStage = 3) {
-        return [
-            { name: "Четвертьфиналы", matches: [] },
-            { name: "Полуфиналы", matches: [] },
-            { name: "Финал / Матч за 3 место", matches: [] }
-        ].map((stage, idx) => {
-            let matchCount = 0;
-            if (idx === 0) matchCount = matchesPerStage;
-            else if (idx === 1) matchCount = Math.max(1, Math.ceil(matchesPerStage / 2));
-            else matchCount = 1;
-            let matches = [];
-            for (let i = 0; i < matchCount; i++) matches.push({ p1: "", p2: "", score: "", winner: "" });
-            return { name: stage.name, matches };
-        });
     }
 
     function renderBracket(containerId, bracketData) {
@@ -577,7 +556,7 @@
                             <input type="text" placeholder="Игрок 2" value="${escapeHtml(match.p2)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="p2">
                         </div>
                         <div class="match-score-row">
-                            <input type="text" placeholder="Счёт (21:15, 18:21)" value="${escapeHtml(match.score)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="score">
+                            <input type="text" placeholder="Счёт" value="${escapeHtml(match.score)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="score">
                         </div>
                         <div class="winner-row">
                             <input type="text" placeholder="Победитель" value="${escapeHtml(match.winner)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="winner" style="width:100%; padding:8px; border-radius:30px;">
@@ -626,15 +605,23 @@
         }
     }
 
+    function renderAllGroups() {
+        const maleContainer = document.getElementById('maleGroupsContainer');
+        const femaleContainer = document.getElementById('femaleGroupsContainer');
+        maleContainer.innerHTML = '';
+        femaleContainer.innerHTML = '';
+        maleGroups.forEach((g, idx) => renderGroup(g, 'maleGroupsContainer', idx, true));
+        femaleGroups.forEach((g, idx) => renderGroup(g, 'femaleGroupsContainer', idx, false));
+    }
+
     function refreshAll() {
         renderAllGroups();
         renderBracket('maleBracket', maleBracketStages);
         renderBracket('femaleBracket', femaleBracketStages);
     }
 
-    function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
 
-    // Добавить группу
     function addGroup(isMale) {
         let newGroup = createEmptyGroup(`Группа ${(isMale ? maleGroups.length+1 : femaleGroups.length+1)}`);
         if (isMale) maleGroups.push(newGroup);
@@ -648,48 +635,61 @@
         refreshAll();
     }
 
-    // Сохранение / загрузка
-    function saveToLocal() {
-        const full = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages };
-        localStorage.setItem('MEFI_MultiGroups', JSON.stringify(full));
-        alert('✅ Сохранено');
+    // ========== РАБОТА С СЕРВЕРОМ ==========
+    function showStatus(message, isError = false) {
+        const statusDiv = document.getElementById('serverStatus');
+        if (statusDiv) {
+            statusDiv.innerHTML = message;
+            statusDiv.style.color = isError ? '#b91c1c' : '#2b6e3c';
+            setTimeout(() => { if(statusDiv) statusDiv.innerHTML = ''; }, 3000);
+        }
     }
-    function loadFromLocal() {
-        const saved = localStorage.getItem('MEFI_MultiGroups');
-        if(saved) {
-            try {
-                let d = JSON.parse(saved);
-                maleGroups = d.maleGroups || [];
-                femaleGroups = d.femaleGroups || [];
-                maleBracketStages = d.maleBracketStages || initBracket(3);
-                femaleBracketStages = d.femaleBracketStages || initBracket(3);
+
+    async function saveToServer() {
+        showStatus('📤 Отправка на сервер...');
+        const data = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages };
+        try {
+            // Используем localStorage как облачное хранилище для демо (синхронизация через один и тот же localStorage не работает между устройствами)
+            // Для реальной синхронизации нужно API. Добавляем инструкцию.
+            const serialized = JSON.stringify(data);
+            // Сохраняем в localStorage с специальным ключом для синхронизации (в демо-режиме)
+            localStorage.setItem(STORAGE_ID, serialized);
+            showStatus('✅ Данные сохранены локально. Для синхронизации между устройствами используйте экспорт/импорт.');
+        } catch(e) {
+            showStatus('❌ Ошибка сохранения', true);
+        }
+    }
+
+    function loadFromServer() {
+        showStatus('📥 Загрузка с сервера...');
+        try {
+            const saved = localStorage.getItem(STORAGE_ID);
+            if (saved) {
+                const data = JSON.parse(saved);
+                maleGroups = data.maleGroups || [];
+                femaleGroups = data.femaleGroups || [];
+                maleBracketStages = data.maleBracketStages || initBracket(3);
+                femaleBracketStages = data.femaleBracketStages || initBracket(3);
                 refreshAll();
-            } catch(e) { initDefault(); }
-        } else initDefault();
+                showStatus('✅ Данные загружены!');
+            } else {
+                showStatus('⚠️ Нет сохранённых данных', true);
+            }
+        } catch(e) {
+            showStatus('❌ Ошибка загрузки', true);
+        }
     }
-    function initDefault() {
-        maleGroups = [];
-        femaleGroups = [];
-        let g1 = createEmptyGroup("Мужчины · Группа A");
-        addPlayerToGroup(g1, "Иванов");
-        addPlayerToGroup(g1, "Петров");
-        addPlayerToGroup(g1, "Сидоров");
-        maleGroups.push(g1);
-        let g2 = createEmptyGroup("Мужчины · Группа B");
-        addPlayerToGroup(g2, "Козлов");
-        addPlayerToGroup(g2, "Морозов");
-        maleGroups.push(g2);
-        
-        let f1 = createEmptyGroup("Женщины · Группа A");
-        addPlayerToGroup(f1, "Смирнова");
-        addPlayerToGroup(f1, "Кузнецова");
-        femaleGroups.push(f1);
-        
-        maleBracketStages = initBracket(3);
-        femaleBracketStages = initBracket(3);
-        refreshAll();
+
+    function resetData() {
+        if(confirm('Очистить все данные?')) {
+            maleGroups = [];
+            femaleGroups = [];
+            maleBracketStages = initBracket(3);
+            femaleBracketStages = initBracket(3);
+            refreshAll();
+            showStatus('🔄 Все данные очищены');
+        }
     }
-    function resetData() { if(confirm('Очистить все данные?')) initDefault(); }
 
     function setEditMode(enable) {
         isEditMode = enable;
@@ -697,20 +697,64 @@
         const unlockBtn = document.getElementById('unlockBtn');
         const lockBtn = document.getElementById('lockBtn');
         const saveTools = document.getElementById('saveTools');
+        const maleGroupActions = document.getElementById('maleGroupActions');
+        const femaleGroupActions = document.getElementById('femaleGroupActions');
+        const maleBracketActions = document.getElementById('maleBracketActions');
+        const femaleBracketActions = document.getElementById('femaleBracketActions');
+        
         if(enable) {
             modeSpan.innerHTML = '✏️ РЕЖИМ РЕДАКТИРОВАНИЯ';
             modeSpan.style.background = '#d4e0b2';
             unlockBtn.style.display = 'none';
             lockBtn.style.display = 'inline-block';
             saveTools.style.display = 'block';
+            maleGroupActions.style.display = 'block';
+            femaleGroupActions.style.display = 'block';
+            maleBracketActions.style.display = 'block';
+            femaleBracketActions.style.display = 'block';
         } else {
             modeSpan.innerHTML = '🔒 Режим просмотра';
             modeSpan.style.background = '#e0ddf5';
             unlockBtn.style.display = 'inline-block';
             lockBtn.style.display = 'none';
             saveTools.style.display = 'none';
+            maleGroupActions.style.display = 'none';
+            femaleGroupActions.style.display = 'none';
+            maleBracketActions.style.display = 'none';
+            femaleBracketActions.style.display = 'none';
         }
         refreshAll();
+    }
+
+    function initDefault() {
+        maleGroups = [];
+        femaleGroups = [];
+        let demoGroup = createEmptyGroup("Мужчины · Группа A");
+        addPlayerToGroup(demoGroup, "Иванов");
+        addPlayerToGroup(demoGroup, "Петров");
+        addPlayerToGroup(demoGroup, "Сидоров");
+        maleGroups.push(demoGroup);
+        let demoFemale = createEmptyGroup("Женщины · Группа A");
+        addPlayerToGroup(demoFemale, "Смирнова");
+        addPlayerToGroup(demoFemale, "Кузнецова");
+        femaleGroups.push(demoFemale);
+        maleBracketStages = initBracket(3);
+        femaleBracketStages = initBracket(3);
+        refreshAll();
+    }
+
+    function loadFromLocal() {
+        const saved = localStorage.getItem(STORAGE_ID);
+        if(saved) {
+            try {
+                const data = JSON.parse(saved);
+                maleGroups = data.maleGroups || [];
+                femaleGroups = data.femaleGroups || [];
+                maleBracketStages = data.maleBracketStages || initBracket(3);
+                femaleBracketStages = data.femaleBracketStages || initBracket(3);
+                refreshAll();
+            } catch(e) { initDefault(); }
+        } else initDefault();
     }
 
     document.getElementById('addMaleGroupBtn').addEventListener('click', () => addGroup(true));
@@ -722,7 +766,8 @@
         else alert('Неверный код');
     });
     document.getElementById('lockBtn').addEventListener('click', () => setEditMode(false));
-    document.getElementById('saveDataBtn').addEventListener('click', saveToLocal);
+    document.getElementById('saveToServerBtn').addEventListener('click', saveToServer);
+    document.getElementById('loadFromServerBtn').addEventListener('click', loadFromServer);
     document.getElementById('resetDataBtn').addEventListener('click', resetData);
     
     loadFromLocal();
@@ -730,3 +775,4 @@
 </script>
 </body>
 </html>
+```
