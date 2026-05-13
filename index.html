@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Первенство МИФИ · Конструктор турнира</title>
+    <title>Первенство МИФИ · Турнирные таблицы</title>
     <style>
         * {
             margin: 0;
@@ -28,7 +28,7 @@
             background: white;
             border-radius: 32px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            margin-bottom: 24px;
+            margin-bottom: 28px;
             overflow: hidden;
         }
         .card-header {
@@ -47,96 +47,114 @@
             padding: 20px;
         }
 
-        /* Панель управления размерами */
-        .size-panel {
+        /* Каждая таблица-группа */
+        .group-container {
+            background: #fefefe;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            border: 1px solid #e0ddf5;
+            overflow: hidden;
+        }
+        .group-title-bar {
+            background: #eae9fc;
+            padding: 12px 20px;
             display: flex;
- flex-wrap: wrap;
-            gap: 20px;
-            background: #f5f4fe;
-            border-radius: 28px;
-            padding: 18px;
-            margin-bottom: 24px;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
-        .size-group {
-            flex: 1;
-            min-width: 180px;
-        }
-        .size-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #0b0829;
-        }
-        .size-group input {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 40px;
-            border: 2px solid #cbc8e0;
+        .group-title-bar input {
             font-size: 1rem;
-            text-align: center;
-        }
-        .btn-primary {
-            background: #0b0829;
-            color: white;
-            border: none;
-            padding: 10px 24px;
+            font-weight: 700;
+            padding: 6px 12px;
             border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
+            border: 1px solid #cbc8e0;
+            background: white;
         }
-        .btn-primary:active { transform: scale(0.97); }
-        .btn-secondary {
-            background: #6c5b7b;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Таблицы */
         .table-wrapper {
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            padding: 16px;
         }
         .tournament-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
             min-width: 500px;
+            background: white;
+        }
+        .tournament-table th, .tournament-table td {
+            border: 1px solid #d4d4e0;
+            padding: 10px 8px;
+            text-align: center;
+            vertical-align: middle;
         }
         .tournament-table th {
-            background: #eae9fc;
-            padding: 12px 8px;
-            text-align: center;
+            background: #f5f4ff;
             font-weight: 700;
         }
-        .tournament-table td {
-            padding: 8px 6px;
-            text-align: center;
-            border-bottom: 1px solid #ececf0;
-        }
-        .player-name-td {
-            font-weight: 600;
-            text-align: left !important;
+        .player-col {
+            font-weight: 700;
             background: #faf9ff;
+            text-align: left !important;
+            min-width: 120px;
+        }
+        .score-cell {
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        .win-cell {
+            background-color: #c8f0d1 !important;
+        }
+        .stats-col {
+            background: #f5f3ff;
+            font-weight: 600;
         }
         .editable-input {
             width: 100%;
-            padding: 8px 6px;
-            border-radius: 14px;
+            padding: 6px 4px;
+            border-radius: 12px;
             border: 1.5px solid #cbd5e1;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            font-family: monospace;
+            text-align: center;
+        }
+        .player-input {
+            font-weight: 600;
+            background: #fffef5;
             font-family: inherit;
         }
-        .score-badge {
-            font-family: monospace;
-            background: #f1efff;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+        .delete-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0 8px;
+            color: #b91c1c;
+        }
+        .btn-icon {
+            background: #f0eef5;
+            border: none;
+            border-radius: 40px;
+            padding: 6px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-primary {
+            background: #0b0829;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: #4a3f7a;
+            color: white;
         }
 
         /* Олимпийские сетки */
@@ -191,9 +209,6 @@
             border-radius: 30px;
             font-family: monospace;
         }
-        .winner-row {
-            margin-top: 8px;
-        }
         .winner-badge {
             background: #0b0829;
             color: white;
@@ -204,269 +219,351 @@
             display: block;
         }
 
-        /* Режим редактирования */
-        .edit-mode-badge {
-            background: #d4e0b2;
+        /* Панель управления */
+        .control-panel {
+            background: #f8f7fc;
+            border-radius: 32px;
+            padding: 18px;
+            margin-bottom: 24px;
+            border: 2px solid #cbc8e0;
+        }
+        .admin-area {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .code-input {
+            padding: 10px 16px;
+            border-radius: 40px;
+            border: 2px solid #cbc8e0;
+            font-family: monospace;
+            flex: 2;
+            min-width: 180px;
+        }
+        .mode-badge {
+            background: #e0ddf5;
             padding: 6px 16px;
             border-radius: 40px;
             font-weight: 600;
             font-size: 0.8rem;
         }
-        .readonly-badge {
-            background: #e0ddf5;
-        }
-        .admin-panel {
-            background: #f8f7fc;
-            border-radius: 32px;
-            padding: 18px;
-            border: 2px dashed #8f89c2;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .code-input {
-            flex: 2;
-            padding: 10px 16px;
-            border-radius: 60px;
-            border: 2px solid #cbc8e0;
-            font-family: monospace;
-        }
-        button {
-            cursor: pointer;
-        }
         @media (min-width: 768px) {
             .bracket-container { flex-direction: row; flex-wrap: wrap; }
-            .bracket-stage { flex: 1; min-width: 250px; }
+            .bracket-stage { flex: 1; min-width: 260px; }
         }
-        .footer-note {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #4a457a;
-        }
-        .delete-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0 8px;
-            color: #b91c1c;
+        .add-group-btn {
+            background: #2b6e3c;
+            margin-left: 12px;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div style="text-align: center; margin-bottom: 20px;">
-        <h1 style="font-size: 2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Первенство МИФИ</h1>
-        <p style="color: #2d2a5e;">Конструктор турнира — настрой размеры, затем заполняй игроков и счёт</p>
+        <h1 style="font-size: 2.2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Первенство МИФИ</h1>
     </div>
 
-    <!-- Панель настройки размеров (видна всегда, но генерирует заново) -->
-    <div class="size-panel">
-        <div class="size-group">
-            <label>📊 Таблица 1 (строк)</label>
-            <input type="number" id="rowsTable1" min="0" max="30" value="4">
-        </div>
-        <div class="size-group">
-            <label>📊 Таблица 2 (строк)</label>
-            <input type="number" id="rowsTable2" min="0" max="30" value="4">
-        </div>
-        <div class="size-group">
-            <label>🏆 Олимпийка 1 (матчей в этапе)</label>
-            <input type="number" id="matchesStage1" min="0" max="20" value="3" placeholder="матчей/этап">
-        </div>
-        <div class="size-group">
-            <label>🥈 Олимпийка 2 (матчей в этапе)</label>
-            <input type="number" id="matchesStage2" min="0" max="20" value="3">
-        </div>
-        <div class="size-group">
-            <button id="applySizesBtn" class="btn-primary" style="margin-top: 28px;">✨ Создать схемы</button>
-        </div>
-    </div>
-
-    <!-- ТАБЛИЦА 1 -->
-    <div class="card">
-        <div class="card-header">
-            <span>📋 Таблица 1 · Групповой этап</span>
-            <button id="addRowTable1Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить строку</button>
-        </div>
-        <div class="card-body">
-            <div class="table-wrapper">
-                <table class="tournament-table" id="table1">
-                    <thead id="table1Head"></thead>
-                    <tbody id="table1Body"></tbody>
-                </table>
+    <!-- Панель управления -->
+    <div class="control-panel" id="sizePanel">
+        <div class="admin-area">
+            <div><span id="modeBadge" class="mode-badge">🔒 Режим просмотра</span></div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="text" id="adminCodeInput" class="code-input" placeholder="Код BDMEPHI2026">
+                <button id="unlockBtn" class="btn-primary">🔓 Активировать</button>
+                <button id="lockBtn" class="btn-primary" style="background:#6c5b7b; display:none;">🔒 Закрыть</button>
             </div>
         </div>
+        <div id="saveTools" style="display: none; margin-top: 16px; text-align: right;">
+            <button id="saveDataBtn" class="btn-primary" style="background:#2b6e3c;">💾 Сохранить всё</button>
+            <button id="resetDataBtn" class="btn-primary" style="background:#8b5e3c; margin-left: 10px;">⟳ Сбросить всё</button>
+        </div>
     </div>
 
-    <!-- ОЛИМПИЙСКАЯ СЕТКА 1 -->
+    <!-- МУЖСКОЙ РАЗРЯД: несколько таблиц (групп) -->
     <div class="card">
         <div class="card-header">
-            <span>🏆 Олимпийская сетка 1 · Плей-офф A</span>
-            <button id="addMatchBracket1Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить матч</button>
-        </div>
-        <div class="card-body">
-            <div id="bracket1Stages" class="bracket-container"></div>
-        </div>
-    </div>
-
-    <!-- ТАБЛИЦА 2 -->
-    <div class="card">
-        <div class="card-header">
-            <span>📊 Таблица 2 · Рейтинг / Дополнительно</span>
-            <button id="addRowTable2Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить строку</button>
-        </div>
-        <div class="card-body">
-            <div class="table-wrapper">
-                <table class="tournament-table" id="table2">
-                    <thead id="table2Head"></thead>
-                    <tbody id="table2Body"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- ОЛИМПИЙСКАЯ СЕТКА 2 -->
-    <div class="card">
-        <div class="card-header">
-            <span>🥈 Олимпийская сетка 2 · Утешительный турнир</span>
-            <button id="addMatchBracket2Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить матч</button>
-        </div>
-        <div class="card-body">
-            <div id="bracket2Stages" class="bracket-container"></div>
-        </div>
-    </div>
-
-    <!-- Админ-панель с кодом -->
-    <div class="admin-panel">
-        <div class="flex-between">
+            <span>🏸 Мужской одиночный разряд · Групповой этап</span>
             <div>
-                <span id="modeBadge" class="edit-mode-badge readonly-badge">🔒 Режим просмотра</span>
-            </div>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <input type="text" id="adminCode" class="code-input" placeholder="Код BADMMIPHI2026">
-                <button id="unlockEditBtn" class="btn-primary">🔓 Включить редактирование</button>
-                <button id="lockEditBtn" class="btn-primary" style="background:#6c5b7b; display: none;">🔒 Выключить</button>
+                <button id="addMaleGroupBtn" class="btn-primary btn-secondary" style="background:#2b6e3c;">➕ Добавить группу</button>
             </div>
         </div>
-        <div id="saveTools" style="display: none; margin-top: 18px; display: flex; gap: 12px; justify-content: flex-end;">
-            <button id="saveDataBtn" class="btn-primary" style="background:#2b6e3c;">💾 Сохранить все данные</button>
-            <button id="resetDataBtn" class="btn-primary" style="background:#8b5e3c;">⟳ Сбросить (очистить данные)</button>
+        <div class="card-body" id="maleGroupsContainer"></div>
+    </div>
+
+    <!-- МУЖСКАЯ ОЛИМПИЙСКАЯ СЕТКА -->
+    <div class="card">
+        <div class="card-header">
+            <span>🏆 Мужская олимпийская сетка · Плей-офф</span>
+            <button id="addMaleMatchBtn" class="btn-primary btn-secondary">➕ Добавить матч</button>
+        </div>
+        <div class="card-body">
+            <div id="maleBracket" class="bracket-container"></div>
         </div>
     </div>
-    <div class="footer-note">* В режиме редактирования можно менять любые ячейки и счёт. Кнопки +/- добавляют строки/матчи. Данные сохраняются локально.</div>
+
+    <!-- ЖЕНСКИЙ РАЗРЯД: несколько таблиц -->
+    <div class="card">
+        <div class="card-header">
+            <span>🏸 Женский одиночный разряд · Групповой этап</span>
+            <button id="addFemaleGroupBtn" class="btn-primary btn-secondary" style="background:#2b6e3c;">➕ Добавить группу</button>
+        </div>
+        <div class="card-body" id="femaleGroupsContainer"></div>
+    </div>
+
+    <!-- ЖЕНСКАЯ ОЛИМПИЙСКАЯ СЕТКА -->
+    <div class="card">
+        <div class="card-header">
+            <span>🥈 Женская олимпийская сетка · Плей-офф</span>
+            <button id="addFemaleMatchBtn" class="btn-primary btn-secondary">➕ Добавить матч</button>
+        </div>
+        <div class="card-body">
+            <div id="femaleBracket" class="bracket-container"></div>
+        </div>
+    </div>
 </div>
 
 <script>
-    // ---------- ГЛОБАЛЬНЫЕ ДАННЫЕ ----------
-    let table1Data = { headers: ["#", "Игрок / Команда", "Игры", "Победы", "Поражения", "Очки"], rows: [] };
-    let table2Data = { headers: ["Место", "Игрок", "Рейтинг", "Клуб", "Примечание"], rows: [] };
-    let bracket1Data = { stages: [] };  // [{ name: "Четвертьфинал", matches: [{p1,p2,score,winner}] }]
-    let bracket2Data = { stages: [] };
+    // ---------- СТРУКТУРА: массив групп, каждая группа имеет { name, players, scores } ----------
+    let maleGroups = [];
+    let femaleGroups = [];
     
+    let maleBracketStages = [];  // [{ name, matches }]
+    let femaleBracketStages = [];
+
     let isEditMode = false;
 
-    // Настройки количества по умолчанию
-    let config = { table1Rows: 4, table2Rows: 4, bracket1MatchesPerStage: 3, bracket2MatchesPerStage: 3 };
-
-    // Функция инициализации структур согласно размерам
-    function initStructuresBySizes() {
-        // Таблицы: заполняем пустыми строками
-        table1Data.rows = [];
-        for (let i = 0; i < config.table1Rows; i++) {
-            table1Data.rows.push(Array(table1Data.headers.length).fill(''));
-        }
-        table2Data.rows = [];
-        for (let i = 0; i < config.table2Rows; i++) {
-            table2Data.rows.push(Array(table2Data.headers.length).fill(''));
-        }
-        // Олимпийка 1: 3 этапа (четвертьфинал, полуфинал, финал) с заданным кол-вом матчей
-        bracket1Data.stages = [
-            { name: "Четвертьфиналы", matches: [] },
-            { name: "Полуфиналы", matches: [] },
-            { name: "Финал / Матч за 3 место", matches: [] }
-        ];
-        for (let i = 0; i < config.bracket1MatchesPerStage; i++) {
-            bracket1Data.stages[0].matches.push({ p1: "", p2: "", score: "", winner: "" });
-        }
-        for (let i = 0; i < Math.ceil(config.bracket1MatchesPerStage/2); i++) {
-            bracket1Data.stages[1].matches.push({ p1: "", p2: "", score: "", winner: "" });
-        }
-        bracket1Data.stages[2].matches.push({ p1: "", p2: "", score: "", winner: "" });
-        
-        // Олимпийка 2
-        bracket2Data.stages = [
-            { name: "1/4 финала (утеш.)", matches: [] },
-            { name: "Полуфиналы B", matches: [] },
-            { name: "Финальный матч", matches: [] }
-        ];
-        for (let i = 0; i < config.bracket2MatchesPerStage; i++) {
-            bracket2Data.stages[0].matches.push({ p1: "", p2: "", score: "", winner: "" });
-        }
-        for (let i = 0; i < Math.ceil(config.bracket2MatchesPerStage/2); i++) {
-            bracket2Data.stages[1].matches.push({ p1: "", p2: "", score: "", winner: "" });
-        }
-        bracket2Data.stages[2].matches.push({ p1: "", p2: "", score: "", winner: "" });
+    // Инициализация пустой группы
+    function createEmptyGroup(defaultName = "Новая группа") {
+        return {
+            name: defaultName,
+            players: [],
+            scores: []   // матрица результатов
+        };
     }
 
-    // Рендер таблицы (с поддержкой редактирования)
-    function renderTable(tableId, dataObj, tbodyId, theadId) {
-        const thead = document.getElementById(theadId);
-        const tbody = document.getElementById(tbodyId);
-        if (!thead || !tbody) return;
-        thead.innerHTML = '';
-        const headers = dataObj.headers;
-        const trHead = document.createElement('tr');
-        headers.forEach(h => { let th = document.createElement('th'); th.textContent = h; trHead.appendChild(th); });
-        if (isEditMode) { let thDel = document.createElement('th'); thDel.textContent = '🗑'; trHead.appendChild(thDel); }
-        thead.appendChild(trHead);
+    // Добавить игрока в группу
+    function addPlayerToGroup(group, playerName = "Игрок") {
+        let idx = group.players.length;
+        group.players.push(playerName);
+        // добавить столбец и строку в матрицу
+        group.scores.forEach(row => row.push(''));
+        group.scores.push(Array(group.players.length).fill(''));
+        // обнуляем диагональ
+        for(let i=0; i<group.players.length; i++) group.scores[i][i] = '';
+    }
+
+    // Удалить игрока из группы
+    function removePlayerFromGroup(group, playerIndex) {
+        group.players.splice(playerIndex, 1);
+        group.scores.splice(playerIndex, 1);
+        for(let i=0; i<group.scores.length; i++) group.scores[i].splice(playerIndex, 1);
+    }
+
+    // Подсчёт статистики для группы
+    function calcGroupStats(group) {
+        let n = group.players.length;
+        let stats = [];
+        for (let i = 0; i < n; i++) {
+            let wins = 0, pointsDiff = 0;
+            for (let j = 0; j < n; j++) {
+                if (i === j) continue;
+                let score = group.scores[i][j];
+                if (score && score.trim() !== "") {
+                    let myTotal = 0, oppTotal = 0;
+                    let parts = score.split(',').map(s => s.trim());
+                    parts.forEach(p => {
+                        let sc = p.split(':');
+                        if (sc.length === 2) { myTotal += parseInt(sc[0])||0; oppTotal += parseInt(sc[1])||0; }
+                    });
+                    if (myTotal > oppTotal) wins++;
+                    pointsDiff += (myTotal - oppTotal);
+                }
+            }
+            stats.push({ wins, pointsDiff, totalGames: n-1 });
+        }
+        return stats;
+    }
+
+    // Рендер одной группы
+    function renderGroup(group, containerId, groupIdx, isMale) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
         
-        tbody.innerHTML = '';
-        dataObj.rows.forEach((row, rowIdx) => {
-            const tr = document.createElement('tr');
-            for (let colIdx = 0; colIdx < headers.length; colIdx++) {
-                const td = document.createElement('td');
-                const val = row[colIdx] || '';
-                if (isEditMode) {
-                    const inp = document.createElement('input');
-                    inp.type = 'text';
-                    inp.value = val;
-                    inp.className = 'editable-input';
-                    inp.addEventListener('change', (e) => { dataObj.rows[rowIdx][colIdx] = e.target.value; });
-                    td.appendChild(inp);
-                } else {
-                    td.textContent = val;
-                    if (colIdx === 0 || colIdx === 1) td.classList.add('player-name-td');
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'group-container';
+        groupDiv.dataset.groupIdx = groupIdx;
+        
+        // Заголовок группы
+        const titleBar = document.createElement('div');
+        titleBar.className = 'group-title-bar';
+        if (isEditMode) {
+            let nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.value = group.name;
+            nameInput.style.fontSize = '1rem';
+            nameInput.style.fontWeight = 'bold';
+            nameInput.addEventListener('change', (e) => { group.name = e.target.value; renderAllGroups(); });
+            titleBar.appendChild(nameInput);
+        } else {
+            let titleSpan = document.createElement('span');
+            titleSpan.textContent = group.name;
+            titleBar.appendChild(titleSpan);
+        }
+        let btnGroup = document.createElement('div');
+        if (isEditMode) {
+            let addPlayerBtn = document.createElement('button');
+            addPlayerBtn.textContent = '+ Игрок';
+            addPlayerBtn.className = 'btn-icon';
+            addPlayerBtn.style.marginRight = '8px';
+            addPlayerBtn.onclick = () => { addPlayerToGroup(group, `Новый`); renderAllGroups(); };
+            let delGroupBtn = document.createElement('button');
+            delGroupBtn.textContent = '🗑 Удалить группу';
+            delGroupBtn.className = 'btn-icon';
+            delGroupBtn.style.background = '#f0d6d6';
+            delGroupBtn.onclick = () => {
+                if(isMale) maleGroups.splice(groupIdx,1);
+                else femaleGroups.splice(groupIdx,1);
+                renderAllGroups();
+            };
+            btnGroup.appendChild(addPlayerBtn);
+            btnGroup.appendChild(delGroupBtn);
+        }
+        titleBar.appendChild(btnGroup);
+        groupDiv.appendChild(titleBar);
+        
+        // Таблица
+        const tableWrapper = document.createElement('div');
+        tableWrapper.className = 'table-wrapper';
+        const table = document.createElement('table');
+        table.className = 'tournament-table';
+        const n = group.players.length;
+        const stats = calcGroupStats(group);
+        
+        // Заголовок
+        let thead = document.createElement('thead');
+        let headerRow = document.createElement('tr');
+        headerRow.appendChild(document.createElement('th')).textContent = "Игроки";
+        for (let i=0; i<n; i++) {
+            let th = document.createElement('th');
+            if (isEditMode) {
+                let inp = document.createElement('input');
+                inp.type = 'text';
+                inp.value = group.players[i];
+                inp.className = 'editable-input player-input';
+                inp.addEventListener('change', (e) => { group.players[i] = e.target.value; renderAllGroups(); });
+                th.appendChild(inp);
+            } else th.textContent = group.players[i];
+            headerRow.appendChild(th);
+        }
+        headerRow.appendChild(document.createElement('th')).textContent = "В/П";
+        headerRow.appendChild(document.createElement('th')).textContent = "Разница";
+        if (isEditMode) headerRow.appendChild(document.createElement('th')).textContent = "🗑";
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        
+        let tbody = document.createElement('tbody');
+        for (let i=0; i<n; i++) {
+            let tr = document.createElement('tr');
+            let nameCell = document.createElement('td');
+            nameCell.className = 'player-col';
+            if (isEditMode) {
+                let inp = document.createElement('input');
+                inp.type = 'text';
+                inp.value = group.players[i];
+                inp.className = 'editable-input player-input';
+                inp.addEventListener('change', (e) => { group.players[i] = e.target.value; renderAllGroups(); });
+                nameCell.appendChild(inp);
+            } else nameCell.textContent = group.players[i];
+            tr.appendChild(nameCell);
+            
+            for (let j=0; j<n; j++) {
+                let td = document.createElement('td');
+                if (i===j) td.textContent = "—";
+                else {
+                    let scoreVal = group.scores[i][j] || '';
+                    if (isEditMode) {
+                        let inp = document.createElement('input');
+                        inp.type = 'text';
+                        inp.value = scoreVal;
+                        inp.className = 'editable-input score-cell';
+                        inp.placeholder = "21:15,18:21";
+                        inp.addEventListener('change', (e) => { group.scores[i][j] = e.target.value; renderAllGroups(); });
+                        td.appendChild(inp);
+                    } else {
+                        td.textContent = scoreVal;
+                        if (scoreVal) {
+                            let myTotal=0, oppTotal=0;
+                            scoreVal.split(',').forEach(p => {
+                                let sc = p.split(':');
+                                if(sc.length===2) { myTotal+=parseInt(sc[0])||0; oppTotal+=parseInt(sc[1])||0; }
+                            });
+                            if(myTotal > oppTotal) td.classList.add('win-cell');
+                        }
+                    }
                 }
                 tr.appendChild(td);
             }
+            let statsTd = document.createElement('td'); statsTd.className = 'stats-col';
+            statsTd.textContent = `${stats[i].wins} / ${stats[i].totalGames - stats[i].wins}`;
+            let diffTd = document.createElement('td'); diffTd.className = 'stats-col';
+            diffTd.textContent = stats[i].pointsDiff;
+            tr.appendChild(statsTd);
+            tr.appendChild(diffTd);
+            
             if (isEditMode) {
-                const tdDel = document.createElement('td');
-                const delBtn = document.createElement('button');
+                let delTd = document.createElement('td');
+                let delBtn = document.createElement('button');
                 delBtn.textContent = '✖';
                 delBtn.className = 'delete-btn';
-                delBtn.onclick = () => { dataObj.rows.splice(rowIdx, 1); renderTable(tableId, dataObj, tbodyId, theadId); };
-                tdDel.appendChild(delBtn);
-                tr.appendChild(tdDel);
+                delBtn.onclick = () => { removePlayerFromGroup(group, i); renderAllGroups(); };
+                delTd.appendChild(delBtn);
+                tr.appendChild(delTd);
             }
             tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        tableWrapper.appendChild(table);
+        groupDiv.appendChild(tableWrapper);
+        container.appendChild(groupDiv);
+    }
+
+    function renderAllGroups() {
+        const maleContainer = document.getElementById('maleGroupsContainer');
+        const femaleContainer = document.getElementById('femaleGroupsContainer');
+        maleContainer.innerHTML = '';
+        femaleContainer.innerHTML = '';
+        maleGroups.forEach((g, idx) => renderGroup(g, 'maleGroupsContainer', idx, true));
+        femaleGroups.forEach((g, idx) => renderGroup(g, 'femaleGroupsContainer', idx, false));
+    }
+
+    // Олимпийские сетки
+    function initBracket(matchesPerStage = 3) {
+        return [
+            { name: "Четвертьфиналы", matches: [] },
+            { name: "Полуфиналы", matches: [] },
+            { name: "Финал / Матч за 3 место", matches: [] }
+        ].map((stage, idx) => {
+            let matchCount = 0;
+            if (idx === 0) matchCount = matchesPerStage;
+            else if (idx === 1) matchCount = Math.max(1, Math.ceil(matchesPerStage / 2));
+            else matchCount = 1;
+            let matches = [];
+            for (let i = 0; i < matchCount; i++) matches.push({ p1: "", p2: "", score: "", winner: "" });
+            return { name: stage.name, matches };
         });
     }
 
-    // Рендер олимпийской сетки (динамические этапы)
     function renderBracket(containerId, bracketData) {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = '';
-        bracketData.stages.forEach((stage, stageIdx) => {
+        bracketData.forEach((stage, stageIdx) => {
             const stageDiv = document.createElement('div');
             stageDiv.className = 'bracket-stage';
-            stageDiv.innerHTML = `<div class="stage-title">${stage.name}</div><div class="matches-list" id="matchesList-${containerId}-${stageIdx}"></div>`;
+            stageDiv.innerHTML = `<div class="stage-title">${stage.name}</div><div class="matches-list" id="matches-${containerId}-${stageIdx}"></div>`;
             container.appendChild(stageDiv);
             const matchesContainer = stageDiv.querySelector('.matches-list');
             stage.matches.forEach((match, matchIdx) => {
@@ -475,23 +572,21 @@
                 if (isEditMode) {
                     matchCard.innerHTML = `
                         <div class="match-players-row">
-                            <input type="text" placeholder="Игрок/пара 1" value="${escapeHtml(match.p1)}" data-match="${stageIdx},${matchIdx},p1">
+                            <input type="text" placeholder="Игрок 1" value="${escapeHtml(match.p1)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="p1">
                             <span>vs</span>
-                            <input type="text" placeholder="Игрок/пара 2" value="${escapeHtml(match.p2)}" data-match="${stageIdx},${matchIdx},p2">
+                            <input type="text" placeholder="Игрок 2" value="${escapeHtml(match.p2)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="p2">
                         </div>
                         <div class="match-score-row">
-                            <input type="text" placeholder="Счёт (21:15, 18:21, 21:12)" value="${escapeHtml(match.score)}" data-match="${stageIdx},${matchIdx},score">
+                            <input type="text" placeholder="Счёт (21:15, 18:21)" value="${escapeHtml(match.score)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="score">
                         </div>
                         <div class="winner-row">
-                            <input type="text" placeholder="Победитель" value="${escapeHtml(match.winner)}" data-match="${stageIdx},${matchIdx},winner" style="width:100%; padding:8px; border-radius:30px;">
+                            <input type="text" placeholder="Победитель" value="${escapeHtml(match.winner)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="winner" style="width:100%; padding:8px; border-radius:30px;">
                         </div>
-                        <button class="delete-btn" style="margin-top:8px;" data-del="${stageIdx},${matchIdx}">🗑 Удалить матч</button>
+                        <button class="delete-btn" data-del-stage="${stageIdx}" data-del-match="${matchIdx}">🗑 Удалить матч</button>
                     `;
                 } else {
                     matchCard.innerHTML = `
-                        <div class="match-players-row">
-                            <span>${escapeHtml(match.p1) || '—'}</span> <span>⚡</span> <span>${escapeHtml(match.p2) || '—'}</span>
-                        </div>
+                        <div class="match-players-row"><span>${escapeHtml(match.p1) || '—'}</span> <span>⚡</span> <span>${escapeHtml(match.p2) || '—'}</span></div>
                         <div class="match-score-row"><span>${escapeHtml(match.score) || '—'}</span></div>
                         <div class="winner-row"><div class="winner-badge">${match.winner ? '✅ '+escapeHtml(match.winner) : '—'}</div></div>
                     `;
@@ -499,146 +594,138 @@
                 matchesContainer.appendChild(matchCard);
             });
             if (isEditMode) {
-                const addMatchBtn = document.createElement('button');
-                addMatchBtn.textContent = '+ Добавить матч в этот этап';
-                addMatchBtn.style.marginTop = '12px';
-                addMatchBtn.style.background = '#eae5fc';
-                addMatchBtn.style.border = 'none';
-                addMatchBtn.style.borderRadius = '40px';
-                addMatchBtn.style.padding = '8px';
-                addMatchBtn.style.fontWeight = '600';
-                addMatchBtn.onclick = () => {
-                    bracketData.stages[stageIdx].matches.push({ p1: "", p2: "", score: "", winner: "" });
-                    renderBracket(containerId, bracketData);
-                };
-                stageDiv.appendChild(addMatchBtn);
+                let addBtn = document.createElement('button');
+                addBtn.textContent = '+ Добавить матч';
+                addBtn.style.marginTop = '12px';
+                addBtn.style.background = '#eae5fc';
+                addBtn.style.border = 'none';
+                addBtn.style.borderRadius = '40px';
+                addBtn.style.padding = '8px';
+                addBtn.style.fontWeight = '600';
+                addBtn.onclick = () => { bracketData[stageIdx].matches.push({ p1:"", p2:"", score:"", winner:"" }); renderBracket(containerId, bracketData); };
+                stageDiv.appendChild(addBtn);
             }
         });
-        // Привязываем события для инпутов в режиме редактирования
         if (isEditMode) {
-            document.querySelectorAll(`#${containerId} input[data-match]`).forEach(inp => {
+            document.querySelectorAll(`#${containerId} input[data-stage]`).forEach(inp => {
                 inp.addEventListener('change', (e) => {
-                    const [stageIdx, matchIdx, field] = inp.getAttribute('data-match').split(',');
-                    if (bracketData.stages[stageIdx] && bracketData.stages[stageIdx].matches[matchIdx]) {
-                        bracketData.stages[stageIdx].matches[matchIdx][field] = inp.value;
-                    }
+                    let stage = parseInt(inp.dataset.stage);
+                    let match = parseInt(inp.dataset.match);
+                    let field = inp.dataset.field;
+                    if (bracketData[stage] && bracketData[stage].matches[match]) bracketData[stage].matches[match][field] = inp.value;
                 });
             });
-            document.querySelectorAll(`#${containerId} button[data-del]`).forEach(btn => {
+            document.querySelectorAll(`#${containerId} button[data-del-stage]`).forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const [stageIdx, matchIdx] = btn.getAttribute('data-del').split(',');
-                    if (bracketData.stages[stageIdx] && bracketData.stages[stageIdx].matches[matchIdx]) {
-                        bracketData.stages[stageIdx].matches.splice(matchIdx, 1);
-                        renderBracket(containerId, bracketData);
-                    }
+                    let stage = parseInt(btn.dataset.delStage);
+                    let match = parseInt(btn.dataset.delMatch);
+                    if (bracketData[stage]) bracketData[stage].matches.splice(match,1);
+                    renderBracket(containerId, bracketData);
                 });
             });
         }
+    }
+
+    function refreshAll() {
+        renderAllGroups();
+        renderBracket('maleBracket', maleBracketStages);
+        renderBracket('femaleBracket', femaleBracketStages);
     }
 
     function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-    function refreshAll() {
-        renderTable('table1', table1Data, 'table1Body', 'table1Head');
-        renderTable('table2', table2Data, 'table2Body', 'table2Head');
-        renderBracket('bracket1Stages', bracket1Data);
-        renderBracket('bracket2Stages', bracket2Data);
+    // Добавить группу
+    function addGroup(isMale) {
+        let newGroup = createEmptyGroup(`Группа ${(isMale ? maleGroups.length+1 : femaleGroups.length+1)}`);
+        if (isMale) maleGroups.push(newGroup);
+        else femaleGroups.push(newGroup);
+        renderAllGroups();
     }
 
-    // Сброс данных (очистка всех полей)
-    function resetAllData() {
-        initStructuresBySizes();
+    function addMatchToBracket(isMale) {
+        let bracket = isMale ? maleBracketStages : femaleBracketStages;
+        if (bracket[0]) bracket[0].matches.push({ p1:"", p2:"", score:"", winner:"" });
         refreshAll();
     }
 
-    // Сохранение в localStorage
-    function saveAllToLocal() {
-        const fullState = { table1Data, table2Data, bracket1Data, bracket2Data, config };
-        localStorage.setItem('MIFI_CustomTournament', JSON.stringify(fullState));
-        alert('✅ Данные сохранены!');
+    // Сохранение / загрузка
+    function saveToLocal() {
+        const full = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages };
+        localStorage.setItem('MEFI_MultiGroups', JSON.stringify(full));
+        alert('✅ Сохранено');
     }
     function loadFromLocal() {
-        const saved = localStorage.getItem('MIFI_CustomTournament');
-        if (saved) {
+        const saved = localStorage.getItem('MEFI_MultiGroups');
+        if(saved) {
             try {
-                const parsed = JSON.parse(saved);
-                table1Data = parsed.table1Data;
-                table2Data = parsed.table2Data;
-                bracket1Data = parsed.bracket1Data;
-                bracket2Data = parsed.bracket2Data;
-                config = parsed.config;
-                document.getElementById('rowsTable1').value = config.table1Rows;
-                document.getElementById('rowsTable2').value = config.table2Rows;
-                document.getElementById('matchesStage1').value = config.bracket1MatchesPerStage;
-                document.getElementById('matchesStage2').value = config.bracket2MatchesPerStage;
+                let d = JSON.parse(saved);
+                maleGroups = d.maleGroups || [];
+                femaleGroups = d.femaleGroups || [];
+                maleBracketStages = d.maleBracketStages || initBracket(3);
+                femaleBracketStages = d.femaleBracketStages || initBracket(3);
                 refreshAll();
-            } catch(e) { console.warn(e); }
-        }
+            } catch(e) { initDefault(); }
+        } else initDefault();
     }
-
-    // Генерация новых структур по текущим значениям из панели
-    function applySizes() {
-        config.table1Rows = parseInt(document.getElementById('rowsTable1').value) || 0;
-        config.table2Rows = parseInt(document.getElementById('rowsTable2').value) || 0;
-        config.bracket1MatchesPerStage = parseInt(document.getElementById('matchesStage1').value) || 0;
-        config.bracket2MatchesPerStage = parseInt(document.getElementById('matchesStage2').value) || 0;
-        initStructuresBySizes();
+    function initDefault() {
+        maleGroups = [];
+        femaleGroups = [];
+        let g1 = createEmptyGroup("Мужчины · Группа A");
+        addPlayerToGroup(g1, "Иванов");
+        addPlayerToGroup(g1, "Петров");
+        addPlayerToGroup(g1, "Сидоров");
+        maleGroups.push(g1);
+        let g2 = createEmptyGroup("Мужчины · Группа B");
+        addPlayerToGroup(g2, "Козлов");
+        addPlayerToGroup(g2, "Морозов");
+        maleGroups.push(g2);
+        
+        let f1 = createEmptyGroup("Женщины · Группа A");
+        addPlayerToGroup(f1, "Смирнова");
+        addPlayerToGroup(f1, "Кузнецова");
+        femaleGroups.push(f1);
+        
+        maleBracketStages = initBracket(3);
+        femaleBracketStages = initBracket(3);
         refreshAll();
     }
+    function resetData() { if(confirm('Очистить все данные?')) initDefault(); }
 
-    // Добавление строки в таблицу
-    function addRowToTable(dataObj) {
-        const newRow = Array(dataObj.headers.length).fill('');
-        dataObj.rows.push(newRow);
-        refreshAll();
-    }
-    function addMatchToBracket(bracketData, stageIndex = 0) {
-        if (bracketData.stages[stageIndex]) {
-            bracketData.stages[stageIndex].matches.push({ p1: "", p2: "", score: "", winner: "" });
-            refreshAll();
-        } else { alert("Сначала создайте схему через кнопку 'Создать схемы'"); }
-    }
-
-    // Режим редактирования
     function setEditMode(enable) {
         isEditMode = enable;
         const modeSpan = document.getElementById('modeBadge');
-        const unlockBtn = document.getElementById('unlockEditBtn');
-        const lockBtn = document.getElementById('lockEditBtn');
-        const saveToolsDiv = document.getElementById('saveTools');
-        if (enable) {
-            modeSpan.innerHTML = '✏️ РЕЖИМ РЕДАКТИРОВАНИЯ (меняйте данные)';
+        const unlockBtn = document.getElementById('unlockBtn');
+        const lockBtn = document.getElementById('lockBtn');
+        const saveTools = document.getElementById('saveTools');
+        if(enable) {
+            modeSpan.innerHTML = '✏️ РЕЖИМ РЕДАКТИРОВАНИЯ';
             modeSpan.style.background = '#d4e0b2';
             unlockBtn.style.display = 'none';
             lockBtn.style.display = 'inline-block';
-            saveToolsDiv.style.display = 'flex';
+            saveTools.style.display = 'block';
         } else {
-            modeSpan.innerHTML = '🔒 Режим просмотра (только чтение)';
+            modeSpan.innerHTML = '🔒 Режим просмотра';
             modeSpan.style.background = '#e0ddf5';
             unlockBtn.style.display = 'inline-block';
             lockBtn.style.display = 'none';
-            saveToolsDiv.style.display = 'none';
+            saveTools.style.display = 'none';
         }
         refreshAll();
     }
 
-    // Обработчики событий
-    document.getElementById('applySizesBtn').addEventListener('click', applySizes);
-    document.getElementById('addRowTable1Btn').addEventListener('click', () => addRowToTable(table1Data));
-    document.getElementById('addRowTable2Btn').addEventListener('click', () => addRowToTable(table2Data));
-    document.getElementById('addMatchBracket1Btn').addEventListener('click', () => addMatchToBracket(bracket1Data, 0));
-    document.getElementById('addMatchBracket2Btn').addEventListener('click', () => addMatchToBracket(bracket2Data, 0));
-    document.getElementById('unlockEditBtn').addEventListener('click', () => {
-        const code = document.getElementById('adminCode').value.trim();
-        if (code === 'BADMMIPHI2026') setEditMode(true);
-        else { alert('Неверный код! Доступ только для просмотра.'); setEditMode(false); }
+    document.getElementById('addMaleGroupBtn').addEventListener('click', () => addGroup(true));
+    document.getElementById('addFemaleGroupBtn').addEventListener('click', () => addGroup(false));
+    document.getElementById('addMaleMatchBtn').addEventListener('click', () => addMatchToBracket(true));
+    document.getElementById('addFemaleMatchBtn').addEventListener('click', () => addMatchToBracket(false));
+    document.getElementById('unlockBtn').addEventListener('click', () => {
+        if(document.getElementById('adminCodeInput').value.trim() === 'BDMEPHI2026') setEditMode(true);
+        else alert('Неверный код');
     });
-    document.getElementById('lockEditBtn').addEventListener('click', () => setEditMode(false));
-    document.getElementById('saveDataBtn').addEventListener('click', saveAllToLocal);
-    document.getElementById('resetDataBtn').addEventListener('click', () => { if(confirm('Очистить абсолютно все данные?')) resetAllData(); });
+    document.getElementById('lockBtn').addEventListener('click', () => setEditMode(false));
+    document.getElementById('saveDataBtn').addEventListener('click', saveToLocal);
+    document.getElementById('resetDataBtn').addEventListener('click', resetData);
     
     loadFromLocal();
-    if (table1Data.rows.length === 0) applySizes();  // первичная генерация
     setEditMode(false);
 </script>
 </body>
