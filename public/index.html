@@ -6,11 +6,7 @@
     <title>Первенство МИФИ | Турнир</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: #bfbfdb;
-            padding: 20px 12px 40px;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #bfbfdb; padding: 20px 12px 40px; }
         .container { max-width: 1400px; margin: 0 auto; }
         .card {
             background: white;
@@ -105,15 +101,15 @@
 
 <script>
     let currentData = null;
-    
+    const API_URL = window.location.origin;
+
     async function loadData() {
         const statusDiv = document.getElementById('status');
         statusDiv.innerHTML = '⏳ Загрузка данных...';
         statusDiv.className = 'status';
         
         try {
-            const response = await fetch('data.json?v=' + Date.now());
-            if (!response.ok) throw new Error('Ошибка загрузки');
+            const response = await fetch(`${API_URL}/api/data`);
             currentData = await response.json();
             renderAll();
             statusDiv.innerHTML = '✅ Данные загружены!';
