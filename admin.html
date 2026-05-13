@@ -96,7 +96,6 @@
             cursor: pointer;
         }
         .btn-green { background: #2b6e3c; }
-        .btn-blue { background: #1e5a8a; }
         .bracket-container { display: flex; flex-direction: column; gap: 24px; }
         .bracket-stage { background: #faf9ff; border-radius: 24px; padding: 16px; }
         .stage-title { font-weight: 800; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid #0b0829; }
@@ -104,7 +103,7 @@
         .match-card { background: white; border-radius: 20px; padding: 14px; border: 1px solid #e2defc; }
         .match-players-row { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
         .match-players-row input, .match-players-row span { flex: 1; text-align: center; font-weight: 600; }
-        .match-score-row input, .match-score-row span { width: 100%; text-align: center; background: #f1efff; padding: 8px; border-radius: 30px; font-family: monospace; }
+        .match-score-row input { width: 100%; text-align: center; background: #f1efff; padding: 8px; border-radius: 30px; font-family: monospace; }
         .delete-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #b91c1c; }
         .login-panel {
             background: #f8f7fc;
@@ -124,7 +123,6 @@
         }
         .status { font-size: 0.75rem; margin-top: 10px; padding: 6px; border-radius: 30px; }
         .status-success { background: #d4e0b2; color: #2b6e3c; }
-        .status-error { background: #f0d6d6; color: #b91c1c; }
         .admin-bar {
             background: #2b6e3c;
             color: white;
@@ -137,7 +135,6 @@
             gap: 12px;
             margin-bottom: 20px;
         }
-        .cloud-bar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
         .hidden { display: none !important; }
         @media (min-width: 768px) { .bracket-container { flex-direction: row; flex-wrap: wrap; } .bracket-stage { flex: 1; } }
     </style>
@@ -146,7 +143,6 @@
 <div class="container">
     <div style="text-align: center; margin-bottom: 20px;">
         <h1 style="font-size: 2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Организатор · Первенство МИФИ</h1>
-        <p style="color:#4a457a;">Введите код для редактирования турнира</p>
     </div>
 
     <div id="loginPanel" class="login-panel">
@@ -157,14 +153,16 @@
 
     <div id="adminPanel" class="hidden">
         <div class="admin-bar">
-            <span>✏️ Режим редактирования активен</span>
+            <span>✏️ Режим редактирования</span>
             <button id="logoutBtn" class="btn-primary" style="background:#8b5e3c;">Выйти</button>
         </div>
-        <div class="cloud-bar">
-            <button id="saveCloudBtn" class="btn-primary btn-green">☁️ Опубликовать в интернет</button>
-            <button id="resetLocalBtn" class="btn-primary" style="background:#8b5e3c;">⟳ Сбросить всё</button>
+        
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
+            <button id="downloadDataBtn" class="btn-primary btn-green">💾 Скачать данные (JSON)</button>
+            <button id="uploadDataBtn" class="btn-primary">📂 Загрузить данные из файла</button>
+            <input type="file" id="fileInput" accept=".json" style="display:none;">
         </div>
-        <div id="cloudStatus" class="status" style="text-align: center;"></div>
+        <div id="adminStatus" class="status" style="text-align:center;"></div>
 
         <div class="card">
             <div class="card-header">
@@ -195,18 +193,20 @@
             </div>
             <div class="card-body"><div id="femaleBracket" class="bracket-container"></div></div>
         </div>
+        
+        <div style="text-align: center; margin-top: 20px; padding: 16px; background: #f8f7fc; border-radius: 32px;">
+            <p style="color: #4a457a;"><strong>📌 Как обновить сайт:</strong></p>
+            <p>1. Внесите изменения выше<br>2. Нажмите "Скачать данные (JSON)"<br>3. В репозитории GitHub замените файл <strong>data.json</strong> на скачанный<br>4. Участники увидят обновления при нажатии "Обновить данные"</p>
+        </div>
     </div>
 </div>
 
 <script>
     let maleGroups = [], femaleGroups = [], maleBracketStages = [], femaleBracketStages = [];
     let isAdmin = false;
-    let currentBinId = null;
-    const STORAGE_KEY = 'mefi_organizer_data';
-    const BIN_ID_KEY = 'mefi_bin_id';
-
+    
     function determineWinner(scoreStr) {
-        if (!scoreStr || scoreStr.trim() === "") return null;
+        if (!scoreStr) return null;
         let parts = scoreStr.split(',').map(s => s.trim());
         let p1Wins = 0, p2Wins = 0;
         for (let part of parts) {
@@ -220,8 +220,8 @@
         if (p2Wins > p1Wins) return 2;
         return null;
     }
-
-    function calcGroupStats(group) {
+    
+    function calcStats(group) {
         if (!group.players) return [];
         return group.players.map((_, i) => {
             let wins = 0, diff = 0;
@@ -244,103 +244,57 @@
             return { wins, diff, totalGames: group.players.length - 1 };
         });
     }
-
+    
     function createEmptyGroup(name) { return { name: name, players: [], scores: [] }; }
     function addPlayerToGroup(group, name) { group.players.push(name); group.scores.forEach(r => r.push('')); group.scores.push(Array(group.players.length).fill('')); for(let i=0;i<group.players.length;i++) group.scores[i][i] = ''; }
     function removePlayerFromGroup(group, idx) { group.players.splice(idx,1); group.scores.splice(idx,1); for(let i=0;i<group.scores.length;i++) group.scores[i].splice(idx,1); }
-    function initEmptyBracket() { return [{ name: "Четвертьфиналы", matches: [] }, { name: "Полуфиналы", matches: [] }, { name: "Финал / Матч за 3 место", matches: [] }]; }
-
-    function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ maleGroups, femaleGroups, maleBracketStages, femaleBracketStages, binId: currentBinId })); }
-    function loadLocal() {
-        let saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                let d = JSON.parse(saved);
-                maleGroups = d.maleGroups || []; femaleGroups = d.femaleGroups || [];
-                maleBracketStages = d.maleBracketStages || initEmptyBracket();
-                femaleBracketStages = d.femaleBracketStages || initEmptyBracket();
-                currentBinId = d.binId || localStorage.getItem(BIN_ID_KEY) || null;
-            } catch(e) {}
-        }
-        if (maleGroups.length === 0) {
-            let g = createEmptyGroup("Мужчины · Группа A");
-            addPlayerToGroup(g, "Иванов"); addPlayerToGroup(g, "Петров"); addPlayerToGroup(g, "Сидоров");
-            maleGroups.push(g);
-            let f = createEmptyGroup("Женщины · Группа A");
-            addPlayerToGroup(f, "Смирнова"); addPlayerToGroup(f, "Кузнецова");
-            femaleGroups.push(f);
-            maleBracketStages = initEmptyBracket(); femaleBracketStages = initEmptyBracket();
-        }
-    }
-
-    function showCloudStatus(msg, type) { let el = document.getElementById('cloudStatus'); if(el) { el.innerHTML = msg; el.className = `status status-${type}`; setTimeout(() => { if(el) el.innerHTML = ''; }, 4000); } }
-
-    async function publishToCloud() {
-        showCloudStatus('☁️ Публикация...', 'success');
-        let data = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages, lastUpdate: new Date().toLocaleString() };
-        try {
-            let response;
-            if (currentBinId) {
-                response = await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-            } else {
-                response = await fetch('https://api.jsonbin.io/v3/b', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-            }
-            if (response.ok) {
-                let result = await response.json();
-                currentBinId = result.metadata?.id || result.id;
-                localStorage.setItem(BIN_ID_KEY, currentBinId);
-                saveLocal();
-                showCloudStatus('✅ Опубликовано! ID: ' + currentBinId.substring(0,8) + '...', 'success');
-            } else throw new Error();
-        } catch(e) { showCloudStatus('❌ Ошибка публикации', 'error'); }
-    }
-
-    function resetAll() { if(confirm('Удалить всё?')) { maleGroups=[]; femaleGroups=[]; maleBracketStages=initEmptyBracket(); femaleBracketStages=initEmptyBracket(); saveLocal(); refreshAll(); showCloudStatus('🔄 Очищено', 'success'); } }
-
+    function initEmptyBracket() { return [{ name: "Четвертьфиналы", matches: [] }, { name: "Полуфиналы", matches: [] }, { name: "Финал / 3 место", matches: [] }]; }
+    
     function renderAll() { if(isAdmin) { renderGroups('maleGroupsContainer', maleGroups, true); renderGroups('femaleGroupsContainer', femaleGroups, false); renderBracket('maleBracket', maleBracketStages); renderBracket('femaleBracket', femaleBracketStages); } }
     function refreshAll() { if(isAdmin) renderAll(); }
-
+    
     function renderGroups(containerId, groups, isMale) {
         let container = document.getElementById(containerId); if(!container) return;
         container.innerHTML = '';
         groups.forEach((group, groupIdx) => {
             let div = document.createElement('div'); div.className = 'group-container';
             let titleBar = document.createElement('div'); titleBar.className = 'group-title-bar';
-            let nameInput = document.createElement('input'); nameInput.value = group.name; nameInput.onchange = (e) => { group.name = e.target.value; saveLocal(); refreshAll(); };
+            let nameInput = document.createElement('input'); nameInput.value = group.name; nameInput.onchange = (e) => { group.name = e.target.value; refreshAll(); };
             titleBar.appendChild(nameInput);
             let btnDiv = document.createElement('div');
-            let addBtn = document.createElement('button'); addBtn.textContent = '+ Игрок'; addBtn.className = 'btn-icon'; addBtn.onclick = () => { addPlayerToGroup(group, `Игрок ${group.players.length+1}`); saveLocal(); refreshAll(); };
-            let delBtn = document.createElement('button'); delBtn.textContent = '🗑 Удалить группу'; delBtn.className = 'btn-icon'; delBtn.style.background = '#f0d6d6'; delBtn.onclick = () => { groups.splice(groupIdx,1); saveLocal(); refreshAll(); };
+            let addBtn = document.createElement('button'); addBtn.textContent = '+ Игрок'; addBtn.className = 'btn-icon'; addBtn.onclick = () => { addPlayerToGroup(group, `Игрок ${group.players.length+1}`); refreshAll(); };
+            let delBtn = document.createElement('button'); delBtn.textContent = '🗑 Удалить группу'; delBtn.className = 'btn-icon'; delBtn.onclick = () => { groups.splice(groupIdx,1); refreshAll(); };
             btnDiv.appendChild(addBtn); btnDiv.appendChild(delBtn); titleBar.appendChild(btnDiv); div.appendChild(titleBar);
             let wrapper = document.createElement('div'); wrapper.className = 'table-wrapper';
             let table = document.createElement('table'); table.className = 'tournament-table';
-            let n = group.players.length, stats = calcGroupStats(group);
+            let n = group.players.length, stats = calcStats(group);
             let thead = document.createElement('thead');
             let hr = document.createElement('tr'); hr.appendChild(createTh('Игроки'));
-            for(let i=0;i<n;i++) { let th = document.createElement('th'); let inp = document.createElement('input'); inp.type='text'; inp.value=group.players[i]; inp.className='editable-input'; inp.onchange=(e,idx=i)=>{ group.players[idx]=e.target.value; saveLocal(); refreshAll(); }; th.appendChild(inp); hr.appendChild(th); }
+            for(let i=0;i<n;i++) { let th = document.createElement('th'); let inp = document.createElement('input'); inp.type='text'; inp.value=group.players[i]; inp.className='editable-input'; inp.onchange=(e,idx=i)=>{ group.players[idx]=e.target.value; refreshAll(); }; th.appendChild(inp); hr.appendChild(th); }
             hr.appendChild(createTh('В/П')); hr.appendChild(createTh('Разница')); let delTh = document.createElement('th'); delTh.textContent='🗑'; hr.appendChild(delTh); thead.appendChild(hr); table.appendChild(thead);
             let tbody = document.createElement('tbody');
             for(let i=0;i<n;i++) {
                 let tr = document.createElement('tr');
                 let nameCell = document.createElement('td'); nameCell.className='player-col';
-                let nameInp = document.createElement('input'); nameInp.type='text'; nameInp.value=group.players[i]; nameInp.className='editable-input'; nameInp.onchange=(e,idx=i)=>{ group.players[idx]=e.target.value; saveLocal(); refreshAll(); };
+                let nameInp = document.createElement('input'); nameInp.type='text'; nameInp.value=group.players[i]; nameInp.className='editable-input'; nameInp.onchange=(e,idx=i)=>{ group.players[idx]=e.target.value; refreshAll(); };
                 nameCell.appendChild(nameInp); tr.appendChild(nameCell);
                 for(let j=0;j<n;j++) {
                     let td = document.createElement('td');
                     if(i===j) td.textContent='—';
-                    else { let inp = document.createElement('input'); inp.type='text'; inp.value=group.scores[i][j]||''; inp.className='editable-input score-cell'; inp.placeholder="21:15,18:21,21:10"; inp.onchange=(e,ii=i,jj=j)=>{ group.scores[ii][jj]=e.target.value; saveLocal(); refreshAll(); }; td.appendChild(inp); }
+                    else { let inp = document.createElement('input'); inp.type='text'; inp.value=group.scores[i][j]||''; inp.className='editable-input'; inp.onchange=(e,ii=i,jj=j)=>{ group.scores[ii][jj]=e.target.value; refreshAll(); }; td.appendChild(inp); }
                     tr.appendChild(td);
                 }
                 let st = document.createElement('td'); st.className='stats-col'; st.textContent=`${stats[i].wins}/${stats[i].totalGames-stats[i].wins}`;
                 let df = document.createElement('td'); df.className='stats-col'; df.textContent=stats[i].diff;
                 tr.appendChild(st); tr.appendChild(df);
-                let delTd = document.createElement('td'); let delPlBtn = document.createElement('button'); delPlBtn.textContent='✖'; delPlBtn.className='delete-btn'; delPlBtn.onclick=(idx=i)=>{ removePlayerFromGroup(group,idx); saveLocal(); refreshAll(); }; delTd.appendChild(delPlBtn); tr.appendChild(delTd);
+                let delTd = document.createElement('td'); let delPlBtn = document.createElement('button'); delPlBtn.textContent='✖'; delPlBtn.className='delete-btn'; delPlBtn.onclick=(idx=i)=>{ removePlayerFromGroup(group,idx); refreshAll(); }; delTd.appendChild(delPlBtn); tr.appendChild(delTd);
                 tbody.appendChild(tr);
             }
             table.appendChild(tbody); wrapper.appendChild(table); div.appendChild(wrapper); container.appendChild(div);
         });
     }
     function createTh(t) { let th = document.createElement('th'); th.textContent=t; return th; }
+    
     function renderBracket(containerId, bracketData) {
         let container = document.getElementById(containerId); if(!container) return;
         container.innerHTML = '';
@@ -349,33 +303,75 @@
             let list = sd.querySelector('.matches-list');
             stage.matches.forEach((match, mi) => {
                 let card = document.createElement('div'); card.className='match-card';
-                card.innerHTML = `<div class="match-players-row"><input placeholder="Игрок 1" value="${escapeHtml(match.p1)}" data-s="${si}" data-m="${mi}" data-f="p1"><span>vs</span><input placeholder="Игрок 2" value="${escapeHtml(match.p2)}" data-s="${si}" data-m="${mi}" data-f="p2"></div><div class="match-score-row"><input placeholder="Счёт" value="${escapeHtml(match.score)}" data-s="${si}" data-m="${mi}" data-f="score"></div><div class="winner-row"><input placeholder="Победитель" value="${escapeHtml(match.winner)}" data-s="${si}" data-m="${mi}" data-f="winner" style="width:100%; padding:8px; border-radius:30px;"></div><button class="delete-btn" data-s="${si}" data-m="${mi}">🗑 Удалить</button>`;
+                card.innerHTML = `<div class="match-players-row"><input placeholder="Игрок 1" value="${escapeHtml(match.p1)}" data-s="${si}" data-m="${mi}" data-f="p1"><span>vs</span><input placeholder="Игрок 2" value="${escapeHtml(match.p2)}" data-s="${si}" data-m="${mi}" data-f="p2"></div><div class="match-score-row"><input placeholder="Счёт" value="${escapeHtml(match.score)}" data-s="${si}" data-m="${mi}" data-f="score"></div><div><input placeholder="Победитель" value="${escapeHtml(match.winner)}" data-s="${si}" data-m="${mi}" data-f="winner" style="width:100%; padding:8px; border-radius:30px;"></div><button class="delete-btn" data-s="${si}" data-m="${mi}">🗑 Удалить</button>`;
                 list.appendChild(card);
             });
             let addBtn = document.createElement('button'); addBtn.textContent='+ Добавить матч'; addBtn.style.cssText='margin-top:12px; background:#eae5fc; border:none; border-radius:40px; padding:8px; cursor:pointer;';
-            addBtn.onclick = () => { bracketData[si].matches.push({ p1:"", p2:"", score:"", winner:"" }); saveLocal(); renderBracket(containerId, bracketData); };
+            addBtn.onclick = () => { bracketData[si].matches.push({ p1:"", p2:"", score:"", winner:"" }); renderBracket(containerId, bracketData); };
             sd.appendChild(addBtn); container.appendChild(sd);
         });
-        document.querySelectorAll(`#${containerId} input[data-s]`).forEach(inp => { inp.onchange = (e) => { let s=parseInt(e.target.dataset.s), m=parseInt(e.target.dataset.m), f=e.target.dataset.f; if(bracketData[s]?.matches[m]) bracketData[s].matches[m][f]=e.target.value; saveLocal(); }; });
-        document.querySelectorAll(`#${containerId} button[data-s][data-m]`).forEach(btn => { btn.onclick = (e) => { let s=parseInt(btn.dataset.s), m=parseInt(btn.dataset.m); if(bracketData[s]) bracketData[s].matches.splice(m,1); saveLocal(); renderBracket(containerId, bracketData); }; });
+        document.querySelectorAll(`#${containerId} input[data-s]`).forEach(inp => { inp.onchange = (e) => { let s=parseInt(e.target.dataset.s), m=parseInt(e.target.dataset.m), f=e.target.dataset.f; if(bracketData[s]?.matches[m]) bracketData[s].matches[m][f]=e.target.value; }; });
+        document.querySelectorAll(`#${containerId} button[data-s][data-m]`).forEach(btn => { btn.onclick = (e) => { let s=parseInt(btn.dataset.s), m=parseInt(btn.dataset.m); if(bracketData[s]) bracketData[s].matches.splice(m,1); renderBracket(containerId, bracketData); }; });
     }
+    
     function escapeHtml(s) { if(!s) return ''; return String(s).replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
-    function addGroup(isMale) { let g = createEmptyGroup(`Группа ${(isMale?maleGroups.length+1:femaleGroups.length+1)}`); if(isMale) maleGroups.push(g); else femaleGroups.push(g); saveLocal(); refreshAll(); }
-    function addMatch(isMale) { let b = isMale ? maleBracketStages : femaleBracketStages; if(b[0]) b[0].matches.push({ p1:"", p2:"", score:"", winner:"" }); saveLocal(); refreshAll(); }
+    function addGroup(isMale) { let g = createEmptyGroup(`Группа ${(isMale?maleGroups.length+1:femaleGroups.length+1)}`); if(isMale) maleGroups.push(g); else femaleGroups.push(g); refreshAll(); }
+    function addMatch(isMale) { let b = isMale ? maleBracketStages : femaleBracketStages; if(b[0]) b[0].matches.push({ p1:"", p2:"", score:"", winner:"" }); refreshAll(); }
+    
+    function downloadData() {
+        const data = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages, lastUpdate: new Date().toLocaleString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById('adminStatus').innerHTML = '✅ Файл data.json скачан! Замените им файл в репозитории.';
+        document.getElementById('adminStatus').className = 'status status-success';
+        setTimeout(() => { let st = document.getElementById('adminStatus'); if(st) st.innerHTML = ''; }, 4000);
+    }
+    
+    function uploadData(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                maleGroups = data.maleGroups || [];
+                femaleGroups = data.femaleGroups || [];
+                maleBracketStages = data.maleBracketStages || initEmptyBracket();
+                femaleBracketStages = data.femaleBracketStages || initEmptyBracket();
+                refreshAll();
+                document.getElementById('adminStatus').innerHTML = '✅ Данные загружены! Не забудьте скачать и заменить data.json в репозитории.';
+                document.getElementById('adminStatus').className = 'status status-success';
+            } catch(err) {
+                document.getElementById('adminStatus').innerHTML = '❌ Ошибка: неверный формат файла';
+                document.getElementById('adminStatus').className = 'status status-error';
+            }
+        };
+        reader.readAsText(file);
+    }
+    
     function setAdmin(enable) {
         isAdmin = enable;
         document.getElementById('loginPanel').classList.toggle('hidden', enable);
         document.getElementById('adminPanel').classList.toggle('hidden', !enable);
-        if(enable) { loadLocal(); refreshAll(); }
+        if(enable) {
+            maleGroups = []; femaleGroups = []; maleBracketStages = initEmptyBracket(); femaleBracketStages = initEmptyBracket();
+            refreshAll();
+        }
     }
+    
     document.getElementById('enterBtn').onclick = () => { if(document.getElementById('codeInput').value === 'BDMEPHI2026') setAdmin(true); else { let st=document.getElementById('loginStatus'); st.innerHTML='❌ Неверный код'; st.className='status status-error'; setTimeout(()=>st.innerHTML='',3000); } };
     document.getElementById('logoutBtn').onclick = () => setAdmin(false);
-    document.getElementById('saveCloudBtn').onclick = publishToCloud;
-    document.getElementById('resetLocalBtn').onclick = resetAll;
+    document.getElementById('downloadDataBtn').onclick = downloadData;
+    document.getElementById('uploadDataBtn').onclick = () => document.getElementById('fileInput').click();
+    document.getElementById('fileInput').onchange = (e) => { if(e.target.files[0]) uploadData(e.target.files[0]); };
     document.getElementById('addMaleGroupBtn').onclick = () => addGroup(true);
     document.getElementById('addFemaleGroupBtn').onclick = () => addGroup(false);
     document.getElementById('addMaleMatchBtn').onclick = () => addMatch(true);
     document.getElementById('addFemaleMatchBtn').onclick = () => addMatch(false);
+    
     setAdmin(false);
 </script>
 </body>
