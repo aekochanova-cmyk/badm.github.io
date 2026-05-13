@@ -1,9 +1,11 @@
+Вот страница с двумя пустыми таблицами и двумя пустыми олимпийскими сетками, как вы просили. Редактирование доступно после ввода кода BADMMIPHI2026.
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Первенство МИФИ · Мужская одиночка (MS) · Группа A+</title>
+    <title>Первенство МИФИ · Редактор таблиц</title>
     <style>
         * {
             margin: 0;
@@ -15,239 +17,129 @@
             font-family: 'Segoe UI', 'Roboto', Tahoma, Geneva, Verdana, sans-serif;
             background: #bfbfdb;
             min-height: 100vh;
-            color: #1e1a2f;
+            padding: 2rem 1rem;
         }
 
-        /* Навбар (как в календаре) */
-        .navbar {
-            background: rgba(255, 255, 255, 0.96);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            padding: 0.9rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-        }
-
-        .nav-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand img {
-            max-height: 65px;
-            width: auto;
-            border-radius: 12px;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: #0b0829;
-            font-weight: 500;
-            font-size: 1.1rem;
-            transition: 0.2s;
-            padding: 0.5rem 0;
-        }
-
-        .nav-menu a:hover {
-            color: #4c3f91;
-            border-bottom: 2px solid #0b0829;
-        }
-
-        .user-area {
-            background: #0b0829;
-            border-radius: 40px;
-            padding: 8px 20px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: default;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Основной контент */
+        /* Главный контейнер */
         .tournament-wrapper {
-            max-width: 1300px;
-            margin: 2rem auto;
-            padding: 0 24px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            padding: 1.8rem 2rem 2rem;
         }
 
-        /* Хлебные крошки и заголовок */
-        .breadcrumb {
-            background: rgba(255,255,240,0.7);
-            padding: 10px 20px;
-            border-radius: 50px;
-            display: inline-block;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: #2d2a5e;
+        /* Заголовок */
+        .main-title {
+            text-align: center;
+            margin-bottom: 2rem;
         }
-
         .main-title h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #0b0829, #39336e);
+            font-size: 3rem;
+            background: linear-gradient(135deg, #0b0829, #413a7c);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            margin-bottom: 0.25rem;
+            letter-spacing: -0.5px;
         }
 
-        .tourney-meta {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
+        /* Стили таблиц */
+        .section {
+            margin-bottom: 3rem;
             background: white;
             border-radius: 28px;
-            padding: 20px 28px;
-            margin: 25px 0;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-
-        .meta-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .meta-icon {
-            font-size: 2rem;
-        }
-
-        .meta-text strong {
-            display: block;
-            font-size: 0.8rem;
-            color: #6c6a8b;
-        }
-        .meta-text span {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        /* Секция правил / схема */
-        .info-scheme {
-            background: #f4f2ff;
-            border-radius: 28px;
-            padding: 20px 28px;
-            margin-bottom: 35px;
-            border-left: 8px solid #0b0829;
-        }
-        .info-scheme h3 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            font-size: 1.4rem;
-        }
-        .scheme-text {
-            font-size: 1rem;
-            color: #2c2a4a;
-            line-height: 1.4;
-        }
-
-        /* Таблицы подгрупп */
-        .group-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 50px;
-            justify-content: space-between;
-        }
-        .group-card {
-            background: white;
-            border-radius: 28px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            flex: 1;
-            min-width: 280px;
-            overflow-x: auto;
-        }
-        .group-header {
+        .section-header {
             background: #0b0829;
             color: white;
-            padding: 16px 20px;
-            border-radius: 28px 28px 0 0;
+            padding: 1rem 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            font-size: 1.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .group-table {
+        .section-header span:first-child {
+            letter-spacing: -0.3px;
+        }
+        .btn-mini {
+            background: #f0f0f5;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #0b0829;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0.5rem 1rem 1.5rem 1rem;
+        }
+        .editable-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            min-width: 500px;
         }
-        .group-table th {
+        .editable-table th {
             background: #eae9fc;
             padding: 12px 8px;
             text-align: center;
-            font-weight: 600;
-            color: #1e1a2f;
+            font-weight: 700;
+            border-bottom: 2px solid #cbc8e0;
         }
-        .group-table td {
-            padding: 10px 6px;
+        .editable-table td {
+            padding: 10px 8px;
             text-align: center;
             border-bottom: 1px solid #ececf0;
         }
-        .player-name {
+        .player-name-cell {
             font-weight: 600;
             text-align: left !important;
-            padding-left: 12px;
+            background: #faf9ff;
         }
-        .score-cell {
+        .edit-input {
+            width: 100%;
+            padding: 8px 8px;
+            border-radius: 14px;
+            border: 2px solid #cbd5e1;
             font-family: monospace;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            background: #fffef7;
+            transition: 0.1s;
+        }
+        .edit-input:focus {
+            outline: none;
+            border-color: #0b0829;
+            box-shadow: 0 0 0 2px rgba(11,8,41,0.2);
         }
 
-        /* Этап 2 — плей-офф сетка (по мотивам сайта) */
-        .playoff-container {
-            background: white;
-            border-radius: 32px;
-            padding: 20px 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-        }
-        .playoff-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            padding-left: 10px;
-            border-left: 6px solid #0b0829;
-        }
-        .bracket {
+        /* Блоки олимпийской сетки */
+        .bracket-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
             gap: 30px;
-            row-gap: 40px;
+            justify-content: center;
+            padding: 1.5rem 1rem;
         }
         .bracket-col {
             flex: 1;
-            min-width: 220px;
+            min-width: 240px;
             background: #faf9ff;
             border-radius: 24px;
-            padding: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
         }
         .bracket-match {
             background: white;
             border-radius: 20px;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2defc;
@@ -255,244 +147,490 @@
         .match-players {
             display: flex;
             justify-content: space-between;
-            font-weight: 600;
-            margin-bottom: 8px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
-        .match-score {
-            background: #f1efff;
-            padding: 6px 10px;
-            border-radius: 30px;
-            font-family: monospace;
-            font-size: 0.8rem;
+        .match-players input {
+            width: 45%;
             text-align: center;
+        }
+        .match-score input, .match-winner input {
+            width: 100%;
             margin-top: 6px;
         }
-        .winner-badge {
+        .bracket-title {
+            font-weight: 800;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            color: #0b0829;
+            border-left: 4px solid #0b0829;
+            padding-left: 12px;
+        }
+
+        /* Админ-панель */
+        .admin-panel {
+            margin-top: 40px;
+            background: #f8f7fc;
+            border-radius: 40px;
+            padding: 18px 28px;
+            border: 2px dashed #8f89c2;
+        }
+        .admin-unlock {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .admin-unlock input {
+            flex: 2;
+            padding: 12px 20px;
+            border-radius: 60px;
+            border: 2px solid #cbc8e0;
+            font-size: 1rem;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        .admin-unlock button {
             background: #0b0829;
             color: white;
-            font-size: 0.7rem;
-            border-radius: 40px;
-            padding: 2px 12px;
-            display: inline-block;
-            margin-top: 6px;
-        }
-        .place-row {
-            background: #e2dfec;
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 40px;
-            text-align: center;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
             font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        hr {
-            margin: 15px 0;
+        .admin-unlock button:hover {
+            background: #3b3570;
+            transform: scale(0.97);
         }
-        footer {
-            text-align: center;
-            padding: 28px;
-            color: #302c54;
-            border-top: 1px solid #ccc5e6;
+        .edit-tools {
             margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
         }
+        .save-all-btn {
+            background: #2b6e3c;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .reset-btn {
+            background: #8b5e3c;
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            background: #e0ddf5;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
         @media (max-width: 760px) {
-            .group-section {
-                flex-direction: column;
-            }
-            .bracket {
-                flex-direction: column;
-                align-items: stretch;
-            }
+            .tournament-wrapper { padding: 1rem; }
+            .bracket-container { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <div class="nav-container">
-        <div class="brand">
-            <!-- логотип заглушка, но стиль как в календаре -->
-            <div style="background:#0b0829; width:48px; height:48px; border-radius: 50%; display: flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:1.5rem;">🏸</div>
-            <span style="font-weight:800; font-size:1.4rem;">МИФИ Спорт</span>
-        </div>
-        <ul class="nav-menu">
-            <li><a href="#">Главная</a></li>
-            <li><a href="#" style="border-bottom: 2px solid #0b0829;">Первенство</a></li>
-            <li><a href="#">Календарь</a></li>
-            <li><a href="#">Игроки</a></li>
-        </ul>
-        <div class="user-area">Личный кабинет</div>
-    </div>
-</nav>
 
 <div class="tournament-wrapper">
-    <div class="breadcrumb">🏸 Турнир памяти В.П. Ткаченко → Первенство МИФИ 2026 → MS (мужская одиночка)</div>
     <div class="main-title">
-        <h1>🏆 Мужская одиночка (MS) – Группа A+</h1>
-        <p style="margin-top: 6px;">Первенство МИФИ 2026 · Высшая лига</p>
+        <h1>🏸 Первенство МИФИ</h1>
     </div>
 
-    <!-- мета-инфо -->
-    <div class="tourney-meta">
-        <div class="meta-card"><div class="meta-icon">📅</div><div class="meta-text"><strong>Даты</strong><span>12–18 апреля 2026</span></div></div>
-        <div class="meta-card"><div class="meta-icon">📍</div><div class="meta-text"><strong>Локация</strong><span>Спорткомплекс МИФИ, Москва</span></div></div>
-        <div class="meta-card"><div class="meta-icon">🏅</div><div class="meta-text"><strong>Категория</strong><span>MS · Группа A+ (КМС и выше)</span></div></div>
-        <div class="meta-card"><div class="meta-icon">🎯</div><div class="meta-text"><strong>Система</strong><span>3 гейма до 21, олимпийка кресты</span></div></div>
-    </div>
-
-    <!-- схема игр, как на сайте-примере -->
-    <div class="info-scheme">
-        <h3>📌 Схема турнира</h3>
-        <div class="scheme-text">
-            <strong>Этап 1:</strong> 3 подгруппы до 6 участников (круговая система). <br>
-            <strong>Этап 2:</strong> олимпийская система с крестами: победители групп + 3 лучших вторых места выходят в Топ-6. Разыгрываются места с 1 по 6.<br>
-            🏸 Геймов в партии: 3 (каждый до 21 очка). При равной разнице — личные встречи.
+    <!-- БЛОК 1: ТАБЛИЦА №1 (ГРУППА/СЕТКА) -->
+    <div class="section" id="table1Section">
+        <div class="section-header">
+            <span>📋 Таблица 1 · Групповой этап</span>
+            <button class="btn-mini" id="addRowTable1" style="display: none;">➕ Добавить строку</button>
         </div>
-    </div>
-
-    <!-- ========= ЭТАП 1: ПОДГРУППЫ ========= -->
-    <h2 style="margin: 10px 0 20px 0; font-size: 1.9rem;">📊 Групповой этап</h2>
-    <div class="group-section">
-        <!-- Подгруппа 1 -->
-        <div class="group-card">
-            <div class="group-header">Подгруппа 1</div>
-            <table class="group-table">
-                <thead><tr><th>#</th><th>Игроки</th><th>1</th><th>2</th><th>3</th><th>Игры</th><th>Очки</th><th>Место</th></tr></thead>
-                <tbody>
-                    <tr><td>1</td><td class="player-name">Таволжанов М.</td><td class="score-cell">2:0<br>21,21</td><td class="score-cell">2:0<br>21,21</td><td>2(+2)</td><td>4(24)</td><td><b>1</b></td></tr>
-                    <tr><td>2</td><td class="player-name">Широков Д.</td><td class="score-cell">0:2<br>15,10</td><td class="score-cell">0:2<br>8,18</td><td>2(-4)</td><td>-4(-33)</td><td>3</td></tr>
-                    <tr><td>3</td><td class="player-name">Милешин Е. Ю.</td><td class="score-cell">0:2<br>17,18</td><td class="score-cell">2:0<br>21,21</td><td>2(+1)</td><td>0(9)</td><td>2</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Подгруппа 2 -->
-        <div class="group-card">
-            <div class="group-header">Подгруппа 2</div>
-            <table class="group-table">
-                <thead><tr><th>#</th><th>Игроки</th><th>1</th><th>2</th><th>3</th><th>Игры</th><th>Очки</th><th>Место</th></tr></thead>
-                <tbody>
-                    <tr><td>1</td><td class="player-name">Ицков В.</td><td class="score-cell">2:0<br>21,21</td><td class="score-cell">2:0<br>21,21</td><td>2(+2)</td><td>4(23)</td><td><b>1</b></td></tr>
-                    <tr><td>2</td><td class="player-name">Легченко Е.</td><td class="score-cell">0:2<br>14,16</td><td class="score-cell">2:0<br>21,21</td><td>2(+1)</td><td>0(5)</td><td>2</td></tr>
-                    <tr><td>3</td><td class="player-name">Мураткалиев Т.</td><td class="score-cell">0:2<br>16,15</td><td class="score-cell">0:2<br>16,9</td><td>2(-4)</td><td>-4(-28)</td><td>3</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Подгруппа 3 (4 участника) -->
-        <div class="group-card">
-            <div class="group-header">Подгруппа 3</div>
-            <table class="group-table">
-                <thead><tr><th>#</th><th>Игроки</th><th>1</th><th>2</th><th>3</th><th>4</th><th>Игры</th><th>Очки</th><th>Место</th></tr></thead>
-                <tbody>
-                    <tr><td>1</td><td class="player-name">Федоткин Г. О.</td><td class="score-cell">2:1<br>20,21,21</td><td class="score-cell">2:0<br>21,21</td><td class="score-cell">2:0<br>21,21</td><td>3(+3)</td><td>5(59)</td><td><b>1</b></td></tr>
-                    <tr><td>2</td><td class="player-name">Мякишев К.</td><td class="score-cell">1:2<br>22,14,12</td><td class="score-cell">2:0<br>21,21</td><td class="score-cell">2:0<br>21,21</td><td>3(+2)</td><td>3(27)</td><td>2</td></tr>
-                    <tr><td>3</td><td class="player-name">Девочкин Д.</td><td class="score-cell">0:2<br>15,10</td><td class="score-cell">0:2<br>16,17</td><td class="score-cell">2:0<br>21,21</td><td>3(+1)</td><td>-2(-11)</td><td>3</td></tr>
-                    <tr><td>4</td><td class="player-name">Юфкин О.</td><td class="score-cell">0:2<br>10,4</td><td class="score-cell">0:2<br>5,5</td><td class="score-cell">0:2<br>12,15</td><td>3(-6)</td><td>-6(-75)</td><td>4</td></tr>
-                </tbody>
+        <div class="table-wrapper">
+            <table class="editable-table" id="table1">
+                <thead>
+                    <tr id="table1-header"></tr>
+                </thead>
+                <tbody id="table1-body"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ========= ЭТАП 2: ИГРЫ ЗА МЕСТА (КАК НА САЙТЕ badminton-nn) ========= -->
-    <div class="playoff-container">
-        <div class="playoff-title">🥇 Плей-офф (олимпийская система) — борьба за 1-6 места</div>
-        <div class="bracket">
-            <!-- Левая часть: четвертьфиналы / матчи за выход -->
-            <div class="bracket-col">
-                <div class="bracket-match">
-                    <div class="match-players"><span>Таволжанов М.</span> <span>⚡</span></div>
-                    <div class="match-players" style="margin-top: 4px;">Легченко Е.</div>
-                    <div class="match-score">2:0 (21:14, 21:16)</div>
-                    <div class="winner-badge">✅ Таволжанов М.</div>
-                </div>
-                <div class="bracket-match">
-                    <div class="match-players"><span>Федоткин Г. О.</span> <span>⚡</span></div>
-                    <div class="match-players" style="margin-top: 4px;">Милешин Е. Ю.</div>
-                    <div class="match-score">2:1 (19:21, 21:17, 21:16)</div>
-                    <div class="winner-badge">✅ Милешин Е. Ю.</div>
-                </div>
-                <div style="margin-top: 20px; font-weight:600;">1/2 финала (топ-4)</div>
-                <div class="bracket-match" style="background:#e8e5ff;">
-                    <div class="match-players"><span>Таволжанов М.</span> vs <span>Мякишев К.</span></div>
-                    <div class="match-score">2:0 (21:18, 21:16)</div>
-                    <div class="winner-badge">Таволжанов М. → финал</div>
-                </div>
-                <div class="bracket-match">
-                    <div class="match-players"><span>Ицков В.</span> vs <span>Милешин Е. Ю.</span></div>
-                    <div class="match-score">2:1 (17:21, 21:19, 21:12)</div>
-                    <div class="winner-badge">Ицков В. → финал</div>
-                </div>
-            </div>
-            <!-- центральная колонка: финал и матч за 3 место -->
-            <div class="bracket-col">
-                <div class="bracket-match" style="background: #f2efc2;">
-                    <div class="match-players"><strong>🏆 ФИНАЛ 🏆</strong></div>
-                    <div class="match-players"><span>Таволжанов М.</span>  vs  <span>Ицков В.</span></div>
-                    <div class="match-score">2:0 (21:18, 21:16)</div>
-                    <div class="winner-badge" style="background: #c9a03d;">🥇 ЧЕМПИОН: ТАВОЛЖАНОВ М.</div>
-                </div>
-                <div class="bracket-match">
-                    <div class="match-players">🥉 Матч за 3 место</div>
-                    <div class="match-players"><span>Мякишев К.</span>  —  <span>Милешин Е. Ю.</span></div>
-                    <div class="match-score">Милешин Е. Ю. победа (счёт 21:19, 18:21, 21:14)</div>
-                    <div class="winner-badge">🥉 3 место: Милешин Е. Ю.</div>
-                </div>
-                <div class="place-row">
-                    🎯 Итоговое распределение: <strong>1. Таволжанов М. | 2. Ицков В. | 3. Милешин Е.Ю.</strong>
-                </div>
-            </div>
-            <!-- колонка с утешительными/доп матчами за 5-6 места (по аналогии) -->
-            <div class="bracket-col">
-                <div class="bracket-match">
-                    <div class="match-players">За 5-6 места</div>
-                    <div class="match-players">Легченко Е.  vs  Федоткин Г.О.</div>
-                    <div class="match-score">2:0 (21:15, 21:12)</div>
-                    <div>🏅 5 место: Легченко Е.</div>
-                </div>
-                <div class="bracket-match">
-                    <div class="match-players">Утешительный финал</div>
-                    <div class="match-players">Широков Д. – Девочкин Д.</div>
-                    <div class="match-score">2:1 (19:21, 21:18, 21:15)</div>
-                    <div>7-8 места: Широков Д. выше</div>
-                </div>
+    <!-- БЛОК 2: ОЛИМПИЙКА 1 (СЕТКА ПЛЕЙ-ОФФ) -->
+    <div class="section" id="bracket1Section">
+        <div class="section-header">
+            <span>🏆 Олимпийская сетка 1 · Плей-офф A</span>
+            <button class="btn-mini" id="addMatchBracket1" style="display: none;">➕ Добавить матч</button>
+        </div>
+        <div id="bracket1-container" class="bracket-container"></div>
+    </div>
+
+    <!-- БЛОК 3: ТАБЛИЦА №2 (РЕЙТИНГ/ДОП) -->
+    <div class="section" id="table2Section">
+        <div class="section-header">
+            <span>📊 Таблица 2 · Рейтинг / Доп. показатели</span>
+            <button class="btn-mini" id="addRowTable2" style="display: none;">➕ Добавить строку</button>
+        </div>
+        <div class="table-wrapper">
+            <table class="editable-table" id="table2">
+                <thead>
+                    <tr id="table2-header"></tr>
+                </thead>
+                <tbody id="table2-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- БЛОК 4: ОЛИМПИЙКА 2 (ВТОРАЯ СЕТКА) -->
+    <div class="section" id="bracket2Section">
+        <div class="section-header">
+            <span>🥈 Олимпийская сетка 2 · Утешительный / Доп. турнир</span>
+            <button class="btn-mini" id="addMatchBracket2" style="display: none;">➕ Добавить матч</button>
+        </div>
+        <div id="bracket2-container" class="bracket-container"></div>
+    </div>
+
+    <!-- Панель администратора -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-unlock">
+            <div class="status-badge" id="editStatusLabel">🔒 Режим просмотра</div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <input type="text" id="secretCodeInput" placeholder="Введите код BADMMIPHI2026" autocomplete="off">
+                <button id="unlockBtn">🔑 Разблокировать</button>
+                <button id="lockBtn" style="background:#6c5b7b; display:none;">🚪 Закрыть редактирование</button>
             </div>
         </div>
-        <hr>
-        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; padding-top: 8px;">
-            <div><span style="background:#0b0829; color:white; border-radius: 30px; padding: 4px 14px;">📋 Примечание:</span> Все партии до 21 очка, решающий гейм до 21. При отказе – техническое поражение.</div>
-            <div>🎥 Трансляции финала: 18 апреля, 16:00 (МСК)</div>
+        <div id="editToolbar" style="display: none;" class="edit-tools">
+            <button id="saveAllBtn" class="save-all-btn">💾 Сохранить все изменения</button>
+            <button id="resetDefaultBtn" class="save-all-btn reset-btn">⟳ Сбросить (очистить всё)</button>
         </div>
     </div>
-
-    <!-- дополнительный блок: сетка игр этапа 2 в стиле "как на сайте" (табличная) -->
-    <div style="background: #fefcf0; border-radius: 28px; padding: 20px; margin-top: 15px;">
-        <h3 style="margin-bottom: 15px;">📋 Сводка этапа 2 (олимпийские кресты)</h3>
-        <div style="overflow-x: auto;">
-            <table style="width:100%; border-collapse: collapse; background: white; border-radius: 20px;">
-                <thead style="background:#cbc8e6;"><tr><th style="padding: 12px;">Стадия</th><th>Пара / Игрок 1</th><th>Пара / Игрок 2</th><th>Счёт</th><th>Победитель</th></tr></thead>
-                <tbody>
-                    <tr><td style="padding: 10px;">Четвертьфинал 1</td><td>Таволжанов М.</td><td>Легченко Е.</td><td>21:14, 21:16</td><td>Таволжанов М.</td></tr>
-                    <tr style="background:#f8f6ff;"><td>Четвертьфинал 2</td><td>Федоткин Г.О.</td><td>Милешин Е.Ю.</td><td>19:21, 21:17, 21:16</td><td>Милешин Е.Ю.</td></tr>
-                    <tr><td>Полуфинал 1</td><td>Таволжанов М.</td><td>Мякишев К.</td><td>21:18, 21:16</td><td>Таволжанов М.</td></tr>
-                    <tr style="background:#f8f6ff;"><td>Полуфинал 2</td><td>Ицков В.</td><td>Милешин Е.Ю.</td><td>17:21, 21:19, 21:12</td><td>Ицков В.</td></tr>
-                    <tr><td><strong>Финал</strong></td><td><strong>Таволжанов М.</strong></td><td><strong>Ицков В.</strong></td><td><strong>21:18, 21:16</strong></td><td><strong>Таволжанов М. (чемпион)</strong></td></tr>
-                    <tr><td>Матч за 3 место</td><td>Мякишев К.</td><td>Милешин Е.Ю.</td><td>19:21, 21:18, 21:14</td><td>Милешин Е.Ю.</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div style="margin-top: 20px; background:#eae7fc; border-radius: 40px; padding: 12px 20px; text-align:center;">
-            ⭐ Итоговая пятёрка сильнейших: <strong>1. Таволжанов М. | 2. Ицков В. | 3. Милешин Е.Ю. | 4. Мякишев К. | 5. Легченко Е.</strong>
-        </div>
-    </div>
-
-    <footer>
-        <p>© 2026 Первенство МИФИ — все права защищены. Данные результатов обновлены после финала.<br>
-        Турнир проведён по регламенту, утверждённому федерацией бадминтона Москвы.</p>
-        <p style="margin-top: 12px;">🏸 Воланчики МИФИ ·  <a href="#" style="color:#3b2c82;">Контакты организаторов</a></p>
-    </footer>
 </div>
 
-<!-- легкий скрипт для имитации динамики (необязательно) -->
 <script>
-    // ничего не ломаем, просто добавляем эстетику
-    console.log("Страница турнира Первенство МИФИ — стиль и наполнение как в оригинале + вайб календаря");
+    // ------------------- СТРУКТУРА ДАННЫХ (ПО УМОЛЧАНИЮ ВСЁ ПУСТОЕ) -------------------
+    let state = {
+        table1: { headers: ["#", "Игрок / Команда", "Игры", "Победы", "Поражения", "Очки"], rows: [] },   // пустые строки
+        table2: { headers: ["Место", "Игрок", "Рейтинг", "Клуб", "Примечание"], rows: [] },
+        bracket1: { columns: [
+            { name: "Четвертьфиналы", matches: [] },
+            { name: "Полуфиналы", matches: [] },
+            { name: "Финал / Матч за 3-е", matches: [] }
+        ] },
+        bracket2: { columns: [
+            { name: "1/4 финала (утешит.)", matches: [] },
+            { name: "Полуфинал B", matches: [] },
+            { name: "Финальный раунд", matches: [] }
+        ] }
+    };
+
+    let isEditMode = false;
+
+    // ---------- РЕНДЕР ТАБЛИЦ (полностью редактируемые инпуты либо текст) ----------
+    function renderTable(tableId, dataObj) {
+        const theadRow = document.getElementById(`${tableId}-header`);
+        const tbody = document.getElementById(`${tableId}-body`);
+        if (!theadRow || !tbody) return;
+        const headers = dataObj.headers;
+        theadRow.innerHTML = '';
+        headers.forEach(h => {
+            const th = document.createElement('th');
+            th.textContent = h;
+            theadRow.appendChild(th);
+        });
+        tbody.innerHTML = '';
+        const rows = dataObj.rows;
+        for (let i = 0; i < rows.length; i++) {
+            const tr = document.createElement('tr');
+            const rowData = rows[i];
+            for (let colIdx = 0; colIdx < headers.length; colIdx++) {
+                const td = document.createElement('td');
+                const cellValue = (rowData[colIdx] !== undefined && rowData[colIdx] !== null) ? rowData[colIdx] : '';
+                if (isEditMode) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'edit-input';
+                    input.value = cellValue;
+                    input.setAttribute('data-table', tableId);
+                    input.setAttribute('data-row', i);
+                    input.setAttribute('data-col', colIdx);
+                    input.addEventListener('change', function(e) {
+                        state[tableId].rows[i][colIdx] = e.target.value;
+                    });
+                    td.appendChild(input);
+                } else {
+                    td.textContent = cellValue;
+                    if (colIdx === 0) td.classList.add('player-name-cell');
+                }
+                tr.appendChild(td);
+            }
+            // Кнопка удаления строки (только в режиме редактирования)
+            if (isEditMode) {
+                const tdDel = document.createElement('td');
+                const delBtn = document.createElement('button');
+                delBtn.textContent = '🗑';
+                delBtn.style.background = '#f0eef5';
+                delBtn.style.border = 'none';
+                delBtn.style.borderRadius = '40px';
+                delBtn.style.cursor = 'pointer';
+                delBtn.style.padding = '4px 12px';
+                delBtn.onclick = () => {
+                    state[tableId].rows.splice(i, 1);
+                    renderTable(tableId, state[tableId]);
+                };
+                tdDel.appendChild(delBtn);
+                tr.appendChild(tdDel);
+            }
+            tbody.appendChild(tr);
+        }
+        // Добавление пустой строки в режиме редактирования через кнопку
+    }
+
+    // Рендер олимпийских сеток (полностью пустые, только редактируемые поля)
+    function renderBracket(bracketId, bracketData) {
+        const container = document.getElementById(`${bracketId}-container`);
+        if (!container) return;
+        container.innerHTML = '';
+        bracketData.columns.forEach((col, colIdx) => {
+            const colDiv = document.createElement('div');
+            colDiv.className = 'bracket-col';
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'bracket-title';
+            titleDiv.textContent = col.name;
+            colDiv.appendChild(titleDiv);
+            const matches = col.matches;
+            for (let mIdx = 0; mIdx < matches.length; mIdx++) {
+                const match = matches[mIdx];
+                const matchDiv = document.createElement('div');
+                matchDiv.className = 'bracket-match';
+                if (isEditMode) {
+                    // Поля: игрок1, игрок2, счёт, победитель
+                    const p1Input = document.createElement('input');
+                    p1Input.type = 'text';
+                    p1Input.placeholder = 'Игрок / пара 1';
+                    p1Input.className = 'edit-input';
+                    p1Input.value = match.p1 || '';
+                    p1Input.style.width = '48%';
+                    const p2Input = document.createElement('input');
+                    p2Input.type = 'text';
+                    p2Input.placeholder = 'Игрок / пара 2';
+                    p2Input.className = 'edit-input';
+                    p2Input.value = match.p2 || '';
+                    p2Input.style.width = '48%';
+                    const playersDiv = document.createElement('div');
+                    playersDiv.className = 'match-players';
+                    playersDiv.appendChild(p1Input);
+                    playersDiv.appendChild(p2Input);
+                    
+                    const scoreInput = document.createElement('input');
+                    scoreInput.type = 'text';
+                    scoreInput.placeholder = 'Счёт (напр. 21:15, 18:21)';
+                    scoreInput.className = 'edit-input';
+                    scoreInput.value = match.score || '';
+                    const winnerInput = document.createElement('input');
+                    winnerInput.type = 'text';
+                    winnerInput.placeholder = 'Победитель';
+                    winnerInput.className = 'edit-input';
+                    winnerInput.value = match.winner || '';
+                    
+                    matchDiv.appendChild(playersDiv);
+                    matchDiv.appendChild(scoreInput);
+                    matchDiv.appendChild(winnerInput);
+                    
+                    // Кнопка удалить матч
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = '✖ Удалить матч';
+                    delBtn.style.marginTop = '10px';
+                    delBtn.style.background = '#e0dbef';
+                    delBtn.style.border = 'none';
+                    delBtn.style.borderRadius = '30px';
+                    delBtn.style.padding = '5px 10px';
+                    delBtn.style.cursor = 'pointer';
+                    delBtn.style.fontSize = '0.7rem';
+                    delBtn.onclick = () => {
+                        bracketData.columns[colIdx].matches.splice(mIdx, 1);
+                        renderBracket(bracketId, bracketData);
+                    };
+                    matchDiv.appendChild(delBtn);
+                    
+                    // сохранение изменений
+                    p1Input.addEventListener('change', (e) => { match.p1 = e.target.value; });
+                    p2Input.addEventListener('change', (e) => { match.p2 = e.target.value; });
+                    scoreInput.addEventListener('change', (e) => { match.score = e.target.value; });
+                    winnerInput.addEventListener('change', (e) => { match.winner = e.target.value; });
+                } else {
+                    // режим просмотра
+                    const playersSpan = document.createElement('div');
+                    playersSpan.className = 'match-players';
+                    playersSpan.innerHTML = `<span>${escapeHtml(match.p1 || '—')}</span> <span>⚡</span> <span>${escapeHtml(match.p2 || '—')}</span>`;
+                    const scoreSpan = document.createElement('div');
+                    scoreSpan.className = 'match-score';
+                    scoreSpan.textContent = match.score || '—';
+                    const winnerSpan = document.createElement('div');
+                    winnerSpan.className = 'winner-badge';
+                    winnerSpan.textContent = match.winner ? `✅ ${match.winner}` : '—';
+                    matchDiv.appendChild(playersSpan);
+                    matchDiv.appendChild(scoreSpan);
+                    matchDiv.appendChild(winnerSpan);
+                }
+                colDiv.appendChild(matchDiv);
+            }
+            // Добавление матча в столбец (если режим админа, но кнопки глобальные, но добавим локальную)
+            if (isEditMode) {
+                const addLocalBtn = document.createElement('button');
+                addLocalBtn.textContent = '+ Добавить матч';
+                addLocalBtn.style.background = '#eae5fc';
+                addLocalBtn.style.border = 'none';
+                addLocalBtn.style.borderRadius = '30px';
+                addLocalBtn.style.padding = '6px 12px';
+                addLocalBtn.style.marginTop = '12px';
+                addLocalBtn.style.cursor = 'pointer';
+                addLocalBtn.onclick = () => {
+                    bracketData.columns[colIdx].matches.push({ p1: '', p2: '', score: '', winner: '' });
+                    renderBracket(bracketId, bracketData);
+                };
+                colDiv.appendChild(addLocalBtn);
+            }
+            container.appendChild(colDiv);
+        });
+    }
+
+    function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // полный рендер всего
+    function refreshAll() {
+        renderTable('table1', state.table1);
+        renderTable('table2', state.table2);
+        renderBracket('bracket1', state.bracket1);
+        renderBracket('bracket2', state.bracket2);
+        // показать/скрыть кнопки добавления строк таблиц
+        const btnsAddRow1 = document.getElementById('addRowTable1');
+        const btnsAddRow2 = document.getElementById('addRowTable2');
+        const addMatchB1 = document.getElementById('addMatchBracket1');
+        const addMatchB2 = document.getElementById('addMatchBracket2');
+        if (isEditMode) {
+            if (btnsAddRow1) btnsAddRow1.style.display = 'inline-block';
+            if (btnsAddRow2) btnsAddRow2.style.display = 'inline-block';
+            if (addMatchB1) addMatchB1.style.display = 'inline-block';
+            if (addMatchB2) addMatchB2.style.display = 'inline-block';
+        } else {
+            if (btnsAddRow1) btnsAddRow1.style.display = 'none';
+            if (btnsAddRow2) btnsAddRow2.style.display = 'none';
+            if (addMatchB1) addMatchB1.style.display = 'none';
+            if (addMatchB2) addMatchB2.style.display = 'none';
+        }
+    }
+
+    // Добавление строк в таблицы
+    function addRowToTable(tableId, emptyRowTemplate) {
+        const colCount = state[tableId].headers.length;
+        const newRow = [];
+        for (let i=0; i<colCount; i++) newRow.push('');
+        state[tableId].rows.push(newRow);
+        refreshAll();
+    }
+
+    // Добавление матча в олимпийку (по умолчанию в первый столбец каждой сетки)
+    function addMatchToBracket(bracketId, columnIndex = 0) {
+        const bracket = state[bracketId];
+        if (bracket && bracket.columns[columnIndex]) {
+            bracket.columns[columnIndex].matches.push({ p1: '', p2: '', score: '', winner: '' });
+            refreshAll();
+        }
+    }
+
+    // Сохранение в localStorage
+    function saveToLocal() {
+        localStorage.setItem('MIFI_EmptyTournamentData', JSON.stringify(state));
+        alert('✅ Все данные сохранены! (локально)');
+    }
+
+    function loadFromLocal() {
+        const saved = localStorage.getItem('MIFI_EmptyTournamentData');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed && parsed.table1 && parsed.table2 && parsed.bracket1 && parsed.bracket2) {
+                    state = parsed;
+                }
+            } catch(e) {}
+        }
+        refreshAll();
+    }
+
+    function resetToEmpty() {
+        if (confirm('Сбросить всё к абсолютно пустому состоянию (удалить все строки и матчи)?')) {
+            state = {
+                table1: { headers: ["#", "Игрок / Команда", "Игры", "Победы", "Поражения", "Очки"], rows: [] },
+                table2: { headers: ["Место", "Игрок", "Рейтинг", "Клуб", "Примечание"], rows: [] },
+                bracket1: { columns: [
+                    { name: "Четвертьфиналы", matches: [] },
+                    { name: "Полуфиналы", matches: [] },
+                    { name: "Финал / Матч за 3-е", matches: [] }
+                ] },
+                bracket2: { columns: [
+                    { name: "1/4 финала (утешит.)", matches: [] },
+                    { name: "Полуфинал B", matches: [] },
+                    { name: "Финальный раунд", matches: [] }
+                ] }
+            };
+            refreshAll();
+        }
+    }
+
+    // Режим редактирования
+    function setEditMode(enable) {
+        isEditMode = enable;
+        const toolbar = document.getElementById('editToolbar');
+        const lockBtn = document.getElementById('lockBtn');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const statusLabel = document.getElementById('editStatusLabel');
+        if (enable) {
+            toolbar.style.display = 'flex';
+            lockBtn.style.display = 'inline-block';
+            unlockBtn.style.display = 'none';
+            statusLabel.innerHTML = '✏️ РЕЖИМ РЕДАКТИРОВАНИЯ (можно вписывать данные)';
+            statusLabel.style.background = '#d4e0b2';
+        } else {
+            toolbar.style.display = 'none';
+            lockBtn.style.display = 'none';
+            unlockBtn.style.display = 'inline-block';
+            statusLabel.innerHTML = '🔒 Режим просмотра (только чтение)';
+            statusLabel.style.background = '#e0ddf5';
+        }
+        refreshAll();
+    }
+
+    // Обработчики кнопок
+    document.getElementById('unlockBtn').addEventListener('click', () => {
+        const code = document.getElementById('secretCodeInput').value.trim();
+        if (code === 'BADMMIPHI2026') {
+            setEditMode(true);
+        } else {
+            alert('❌ Неверный код! Доступ только для чтения.');
+            setEditMode(false);
+        }
+    });
+    document.getElementById('lockBtn').addEventListener('click', () => { setEditMode(false); });
+    document.getElementById('saveAllBtn').addEventListener('click', saveToLocal);
+    document.getElementById('resetDefaultBtn').addEventListener('click', resetToEmpty);
+    
+    // Добавление строк через кнопки в шапке
+    document.getElementById('addRowTable1').addEventListener('click', () => addRowToTable('table1'));
+    document.getElementById('addRowTable2').addEventListener('click', () => addRowToTable('table2'));
+    document.getElementById('addMatchBracket1').addEventListener('click', () => addMatchToBracket('bracket1', 0));
+    document.getElementById('addMatchBracket2').addEventListener('click', () => addMatchToBracket('bracket2', 0));
+
+    // Инициализация: загружаем сохранённое или пустое состояние
+    loadFromLocal();   // если ничего нет — остаётся пустым
+    setEditMode(false);
+    // дополнительно, чтобы гарантировать пустоту изначально: если в localStorage нет записей, то state чист, но rows пусты.
+    // если же пользователь хочет сбросить кнопкой - есть reset.
 </script>
 </body>
 </html>
+```
