@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Организатор | Первенство МИФИ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #bfbfdb;
+            padding: 20px 12px 40px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+        .card-header {
+            background: #0b0829;
+            color: white;
+            padding: 16px 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .card-body { padding: 20px; }
+        .group-container {
+            background: #fefefe;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            border: 1px solid #e0ddf5;
+        }
+        .group-title-bar {
+            background: #eae9fc;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-weight: 700;
+        }
+        .group-title-bar input {
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 40px;
+            border: 1px solid #cbc8e0;
+        }
+        .table-wrapper { overflow-x: auto; padding: 16px; }
+        .tournament-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 500px;
+        }
+        .tournament-table th, .tournament-table td {
+            border: 1px solid #d4d4e0;
+            padding: 10px 8px;
+            text-align: center;
+        }
+        .tournament-table th { background: #f5f4ff; font-weight: 700; }
+        .player-col { font-weight: 700; background: #faf9ff; text-align: left !important; }
+        .editable-input {
+            width: 100%;
+            padding: 6px 4px;
+            border-radius: 12px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 0.75rem;
+            font-family: monospace;
+            text-align: center;
+        }
+        .btn-icon {
+            background: #f0eef5;
+            border: none;
+            border-radius: 40px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-primary {
+            background: #0b0829;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-green { background: #2b6e3c; }
+        .btn-blue { background: #1e5a8a; }
+        .bracket-container { display: flex; flex-direction: column; gap: 24px; }
+        .bracket-stage { background: #faf9ff; border-radius: 24px; padding: 16px; }
+        .stage-title { font-weight: 800; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid #0b0829; }
+        .matches-list { display: flex; flex-direction: column; gap: 16px; }
+        .match-card { background: white; border-radius: 20px; padding: 14px; border: 1px solid #e2defc; }
+        .match-players-row { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+        .match-players-row input, .match-players-row span { flex: 1; text-align: center; font-weight: 600; }
+        .match-score-row input, .match-score-row span { width: 100%; text-align: center; background: #f1efff; padding: 8px; border-radius: 30px; font-family: monospace; }
+        .delete-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #b91c1c; }
+        .login-panel {
+            background: #f8f7fc;
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 2px solid #cbc8e0;
+            text-align: center;
+        }
+        .login-panel input {
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: 2px solid #cbc8e0;
+            font-size: 1rem;
+            width: 250px;
+            margin-right: 12px;
+        }
+        .status { font-size: 0.75rem; margin-top: 10px; padding: 6px; border-radius: 30px; }
+        .status-success { background: #d4e0b2; color: #2b6e3c; }
+        .status-error { background: #f0d6d6; color: #b91c1c; }
+        .admin-bar {
+            background: #2b6e3c;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) { .bracket-container { flex-direction: row; flex-wrap: wrap; } .bracket-stage { flex: 1; } }
+        .hidden { display: none !important; }
+        .cloud-bar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Организатор · Первенство МИФИ</h1>
+    </div>
+
+    <!-- Панель входа -->
+    <div id="loginPanel" class="login-panel">
+        <p style="margin-bottom: 16px;">🔐 Введите код для редактирования турнира</p>
+        <input type="password" id="codeInput" placeholder="Код доступа">
+        <button id="enterBtn" class="btn-primary">Войти</button>
+        <div id="loginStatus" class="status"></div>
+    </div>
+
+    <!-- Панель администратора -->
+    <div id="adminPanel" class="hidden">
+        <div class="admin-bar">
+            <span>✏️ Режим редактирования</span>
+            <button id="logoutBtn" class="btn-primary" style="background:#8b5e3c;">Выйти</button>
+        </div>
+        
+        <div class="cloud-bar">
+            <button id="saveCloudBtn" class="btn-primary btn-green">☁️ Опубликовать в интернет</button>
+            <button id="loadCloudBtn" class="btn-primary btn-blue">⬇️ Загрузить из интернета</button>
+            <button id="resetLocalBtn" class="btn-primary" style="background:#8b5e3c;">⟳ Сбросить всё</button>
+        </div>
+        <div id="cloudStatus" class="status" style="text-align: center;"></div>
+
+        <!-- Мужской разряд -->
+        <div class="card">
+            <div class="card-header">
+                <span>🏸 Мужской одиночный разряд</span>
+                <button id="addMaleGroupBtn" class="btn-primary btn-green">➕ Добавить группу</button>
+            </div>
+            <div class="card-body" id="maleGroupsContainer"></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <span>🏆 Мужская олимпийская сетка</span>
+                <button id="addMaleMatchBtn" class="btn-primary btn-green">➕ Добавить матч</button>
+            </div>
+            <div class="card-body"><div id="maleBracket" class="bracket-container"></div></div>
+        </div>
+
+        <!-- Женский разряд -->
+        <div class="card">
+            <div class="card-header">
+                <span>🏸 Женский одиночный разряд</span>
+                <button id="addFemaleGroupBtn" class="btn-primary btn-green">➕ Добавить группу</button>
+            </div>
+            <div class="card-body" id="femaleGroupsContainer"></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <span>🥈 Женская олимпийская сетка</span>
+                <button id="addFemaleMatchBtn" class="btn-primary btn-green">➕ Добавить матч</button>
+            </div>
+            <div class="card-body"><div id="femaleBracket" class="bracket-container"></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== ГЛОБАЛЬНЫЕ ДАННЫЕ ==========
+    let maleGroups = [];
+    let femaleGroups = [];
+    let maleBracketStages = [];
+    let femaleBracketStages = [];
+    let isAdmin = false;
+    let currentBinId = null;
+
+    // Ключи для хранения
+    const STORAGE_KEY = 'mefi_organizer_data';
+    const BIN_ID_KEY = 'mefi_bin_id';
+
+    // ========== ПОДСЧЁТ ПОБЕД ==========
+    function determineWinner(scoreStr) {
+        if (!scoreStr || scoreStr.trim() === "") return null;
+        let parts = scoreStr.split(',').map(s => s.trim());
+        let p1Wins = 0, p2Wins = 0;
+        for (let part of parts) {
+            let s = part.split(':');
+            if (s.length === 2) {
+                let s1 = parseInt(s[0]);
+                let s2 = parseInt(s[1]);
+                if (s1 > s2) p1Wins++;
+                else if (s2 > s1) p2Wins++;
+            }
+        }
+        if (p1Wins > p2Wins) return 1;
+        if (p2Wins > p1Wins) return 2;
+        return null;
+    }
+
+    function calcGroupStats(group) {
+        if (!group.players) return [];
+        return group.players.map((_, i) => {
+            let wins = 0, diff = 0;
+            for (let j = 0; j < group.players.length; j++) {
+                if (i === j) continue;
+                let score = group.scores[i]?.[j];
+                if (score && score.trim() !== "") {
+                    if (determineWinner(score) === 1) wins++;
+                    let myTotal = 0, oppTotal = 0;
+                    score.split(',').forEach(p => {
+                        let sc = p.split(':');
+                        if (sc.length === 2) {
+                            myTotal += parseInt(sc[0]) || 0;
+                            oppTotal += parseInt(sc[1]) || 0;
+                        }
+                    });
+                    diff += myTotal - oppTotal;
+                }
+            }
+            return { wins, diff, totalGames: group.players.length - 1 };
+        });
+    }
+
+    function createEmptyGroup(name = "Новая группа") {
+        return { name: name, players: [], scores: [] };
+    }
+
+    function addPlayerToGroup(group, playerName = "Игрок") {
+        group.players.push(playerName);
+        group.scores.forEach(row => row.push(''));
+        group.scores.push(Array(group.players.length).fill(''));
+        for (let i = 0; i < group.players.length; i++) group.scores[i][i] = '';
+    }
+
+    function removePlayerFromGroup(group, playerIndex) {
+        group.players.splice(playerIndex, 1);
+        group.scores.splice(playerIndex, 1);
+        for (let i = 0; i < group.scores.length; i++) group.scores[i].splice(playerIndex, 1);
+    }
+
+    function initEmptyBracket() {
+        return [
+            { name: "Четвертьфиналы", matches: [] },
+            { name: "Полуфиналы", matches: [] },
+            { name: "Финал / Матч за 3 место", matches: [] }
+        ];
+    }
+
+    // ========== ЛОКАЛЬНОЕ СОХРАНЕНИЕ ==========
+    function saveLocal() {
+        const data = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages, binId: currentBinId };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadLocal() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                maleGroups = data.maleGroups || [];
+                femaleGroups = data.femaleGroups || [];
+                maleBracketStages = data.maleBracketStages || initEmptyBracket();
+                femaleBracketStages = data.femaleBracketStages || initEmptyBracket();
+                currentBinId = data.binId || localStorage.getItem(BIN_ID_KEY) || null;
+            } catch(e) { console.error(e); }
+        }
+        if (maleGroups.length === 0) {
+            // Создаём демо-данные
+            let demoGroup = createEmptyGroup("Мужчины · Группа A");
+            addPlayerToGroup(demoGroup, "Иванов");
+            addPlayerToGroup(demoGroup, "Петров");
+            addPlayerToGroup(demoGroup, "Сидоров");
+            maleGroups.push(demoGroup);
+            let demoFemale = createEmptyGroup("Женщины · Группа A");
+            addPlayerToGroup(demoFemale, "Смирнова");
+            addPlayerToGroup(demoFemale, "Кузнецова");
+            femaleGroups.push(demoFemale);
+            maleBracketStages = initEmptyBracket();
+            femaleBracketStages = initEmptyBracket();
+        }
+    }
+
+    // ========== ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ (JSONBin.io) ==========
+    function showCloudStatus(msg, type) {
+        let el = document.getElementById('cloudStatus');
+        if (el) { el.innerHTML = msg; el.className = `status status-${type}`; setTimeout(() => { if(el) el.innerHTML = ''; }, 5000); }
+    }
+
+    async function publishToCloud() {
+        showCloudStatus('☁️ Публикация...', 'success');
+        const data = {
+            maleGroups, femaleGroups, maleBracketStages, femaleBracketStages,
+            lastUpdate: new Date().toLocaleString()
+        };
+        try {
+            let response;
+            if (currentBinId) {
+                response = await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                response = await fetch('https://api.jsonbin.io/v3/b', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
+            if (response.ok) {
+                let result = await response.json();
+                currentBinId = result.metadata?.id || result.id;
+                localStorage.setItem(BIN_ID_KEY, currentBinId);
+                saveLocal();
+                showCloudStatus('✅ Опубликовано! ID: ' + currentBinId.substring(0,8) + '... Участники увидят обновления', 'success');
+            } else throw new Error();
+        } catch(e) { showCloudStatus('❌ Ошибка публикации. Проверьте интернет.', 'error'); }
+    }
+
+    async function loadFromCloud() {
+        let id = localStorage.getItem(BIN_ID_KEY);
+        if (!id) { showCloudStatus('⚠️ Нет опубликованных данных. Сначала нажмите "Опубликовать".', 'error'); return; }
+        showCloudStatus('☁️ Загрузка...', 'success');
+        try {
+            let response = await fetch(`https://api.jsonbin.io/v3/b/${id}/latest`, {
+                headers: { 'X-Bin-Meta': 'false' }
+            });
+            if (response.ok) {
+                let data = await response.json();
+                if (data.maleGroups) maleGroups = data.maleGroups;
+                if (data.femaleGroups) femaleGroups = data.femaleGroups;
+                if (data.maleBracketStages) maleBracketStages = data.maleBracketStages;
+                if (data.femaleBracketStages) femaleBracketStages = data.femaleBracketStages;
+                currentBinId = id;
+                saveLocal();
+                refreshAll();
+                showCloudStatus('✅ Данные загружены из интернета!', 'success');
+            } else throw new Error();
+        } catch(e) { showCloudStatus('❌ Ошибка загрузки', 'error'); }
+    }
+
+    function resetAll() {
+        if (confirm('Удалить ВСЕ группы, игроков и результаты?')) {
+            maleGroups = [];
+            femaleGroups = [];
+            maleBracketStages = initEmptyBracket();
+            femaleBracketStages = initEmptyBracket();
+            saveLocal();
+            refreshAll();
+            showCloudStatus('🔄 Всё очищено', 'success');
+        }
+    }
+
+    // ========== РЕНДЕРИНГ ==========
+    function renderAll() {
+        if (!isAdmin) return;
+        renderGroups('maleGroupsContainer', maleGroups, true);
+        renderGroups('femaleGroupsContainer', femaleGroups, false);
+        renderBracket('maleBracket', maleBracketStages);
+        renderBracket('femaleBracket', femaleBracketStages);
+    }
+
+    function refreshAll() { if (isAdmin) renderAll(); }
+
+    function renderGroups(containerId, groups, isMale) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        groups.forEach((group, groupIdx) => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'group-container';
+            const titleBar = document.createElement('div');
+            titleBar.className = 'group-title-bar';
+            const nameInput = document.createElement('input');
+            nameInput.value = group.name;
+            nameInput.style.width = '200px';
+            nameInput.onchange = (e) => { group.name = e.target.value; saveLocal(); refreshAll(); };
+            titleBar.appendChild(nameInput);
+            const btnDiv = document.createElement('div');
+            const addPlayerBtn = document.createElement('button');
+            addPlayerBtn.textContent = '+ Игрок';
+            addPlayerBtn.className = 'btn-icon';
+            addPlayerBtn.onclick = () => { addPlayerToGroup(group, `Игрок ${group.players.length + 1}`); saveLocal(); refreshAll(); };
+            const delGroupBtn = document.createElement('button');
+            delGroupBtn.textContent = '🗑 Удалить группу';
+            delGroupBtn.className = 'btn-icon';
+            delGroupBtn.style.background = '#f0d6d6';
+            delGroupBtn.onclick = () => { groups.splice(groupIdx, 1); saveLocal(); refreshAll(); };
+            btnDiv.appendChild(addPlayerBtn);
+            btnDiv.appendChild(delGroupBtn);
+            titleBar.appendChild(btnDiv);
+            groupDiv.appendChild(titleBar);
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'table-wrapper';
+            const table = document.createElement('table');
+            table.className = 'tournament-table';
+            const n = group.players.length;
+            const stats = calcGroupStats(group);
+            
+            let thead = document.createElement('thead');
+            let headerRow = document.createElement('tr');
+            headerRow.appendChild(createTh('Игроки'));
+            for (let i = 0; i < n; i++) {
+                let th = document.createElement('th');
+                let inp = document.createElement('input');
+                inp.type = 'text';
+                inp.value = group.players[i];
+                inp.className = 'editable-input';
+                inp.onchange = (e, idx=i) => { group.players[idx] = e.target.value; saveLocal(); refreshAll(); };
+                th.appendChild(inp);
+                headerRow.appendChild(th);
+            }
+            headerRow.appendChild(createTh('В/П'));
+            headerRow.appendChild(createTh('Разница'));
+            let delTh = document.createElement('th'); delTh.textContent = '🗑';
+            headerRow.appendChild(delTh);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            let tbody = document.createElement('tbody');
+            for (let i = 0; i < n; i++) {
+                let tr = document.createElement('tr');
+                let nameCell = document.createElement('td');
+                nameCell.className = 'player-col';
+                let nameInp = document.createElement('input');
+                nameInp.type = 'text';
+                nameInp.value = group.players[i];
+                nameInp.className = 'editable-input';
+                nameInp.onchange = (e, idx=i) => { group.players[idx] = e.target.value; saveLocal(); refreshAll(); };
+                nameCell.appendChild(nameInp);
+                tr.appendChild(nameCell);
+                for (let j = 0; j < n; j++) {
+                    let td = document.createElement('td');
+                    if (i === j) td.textContent = '—';
+                    else {
+                        let inp = document.createElement('input');
+                        inp.type = 'text';
+                        inp.value = group.scores[i][j] || '';
+                        inp.className = 'editable-input score-cell';
+                        inp.placeholder = "21:15, 18:21, 21:10";
+                        inp.onchange = (e, ii=i, jj=j) => { group.scores[ii][jj] = e.target.value; saveLocal(); refreshAll(); };
+                        td.appendChild(inp);
+                    }
+                    tr.appendChild(td);
+                }
+                let statsTd = document.createElement('td');
+                statsTd.className = 'stats-col';
+                statsTd.textContent = `${stats[i].wins} / ${stats[i].totalGames - stats[i].wins}`;
+                let diffTd = document.createElement('td');
+                diffTd.className = 'stats-col';
+                diffTd.textContent = stats[i].diff;
+                tr.appendChild(statsTd);
+                tr.appendChild(diffTd);
+                let delTd = document.createElement('td');
+                let delBtn = document.createElement('button');
+                delBtn.textContent = '✖';
+                delBtn.className = 'delete-btn';
+                delBtn.onclick = (idx=i) => { removePlayerFromGroup(group, idx); saveLocal(); refreshAll(); };
+                delTd.appendChild(delBtn);
+                tr.appendChild(delTd);
+                tbody.appendChild(tr);
+            }
+            table.appendChild(tbody);
+            wrapper.appendChild(table);
+            groupDiv.appendChild(wrapper);
+            container.appendChild(groupDiv);
+        });
+    }
+
+    function createTh(text) { let th = document.createElement('th'); th.textContent = text; return th; }
+
+    function renderBracket(containerId, bracketData) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        bracketData.forEach((stage, stageIdx) => {
+            const stageDiv = document.createElement('div');
+            stageDiv.className = 'bracket-stage';
+            stageDiv.innerHTML = `<div class="stage-title">${stage.name}</div><div class="matches-list"></div>`;
+            const listDiv = stageDiv.querySelector('.matches-list');
+            stage.matches.forEach((match, matchIdx) => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.innerHTML = `
+                    <div class="match-players-row">
+                        <input type="text" placeholder="Игрок 1" value="${escapeHtml(match.p1)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="p1">
+                        <span>vs</span>
+                        <input type="text" placeholder="Игрок 2" value="${escapeHtml(match.p2)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="p2">
+                    </div>
+                    <div class="match-score-row">
+                        <input type="text" placeholder="Счёт (21:15, 18:21, 21:10)" value="${escapeHtml(match.score)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="score">
+                    </div>
+                    <div class="winner-row">
+                        <input type="text" placeholder="Победитель" value="${escapeHtml(match.winner)}" data-stage="${stageIdx}" data-match="${matchIdx}" data-field="winner" style="width:100%; padding:8px; border-radius:30px;">
+                    </div>
+                    <button class="delete-btn" data-stage="${stageIdx}" data-match="${matchIdx}">🗑 Удалить матч</button>
+                `;
+                listDiv.appendChild(card);
+            });
+            const addBtn = document.createElement('button');
+            addBtn.textContent = '+ Добавить матч';
+            addBtn.style.cssText = 'margin-top:12px; background:#eae5fc; border:none; border-radius:40px; padding:8px; cursor:pointer;';
+            addBtn.onclick = () => { bracketData[stageIdx].matches.push({ p1: "", p2: "", score: "", winner: "" }); saveLocal(); renderBracket(containerId, bracketData); };
+            stageDiv.appendChild(addBtn);
+            container.appendChild(stageDiv);
+        });
+        attachBracketEvents(containerId, bracketData);
+    }
+
+    function attachBracketEvents(containerId, bracketData) {
+        document.querySelectorAll(`#${containerId} input[data-stage]`).forEach(inp => {
+            inp.onchange = (e) => {
+                let stage = parseInt(e.target.dataset.stage);
+                let match = parseInt(e.target.dataset.match);
+                let field = e.target.dataset.field;
+                if (bracketData[stage]?.matches[match]) {
+                    bracketData[stage].matches[match][field] = e.target.value;
+                    saveLocal();
+                }
+            };
+        });
+        document.querySelectorAll(`#${containerId} button[data-stage][data-match]`).forEach(btn => {
+            btn.onclick = (e) => {
+                let stage = parseInt(btn.dataset.stage);
+                let match = parseInt(btn.dataset.match);
+                if (bracketData[stage]) {
+                    bracketData[stage].matches.splice(match, 1);
+                    saveLocal();
+                    renderBracket(containerId, bracketData);
+                }
+            };
+        });
+    }
+
+    function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+
+    function addGroup(isMale) {
+        let newGroup = createEmptyGroup(`Группа ${(isMale ? maleGroups.length+1 : femaleGroups.length+1)}`);
+        if (isMale) maleGroups.push(newGroup);
+        else femaleGroups.push(newGroup);
+        saveLocal();
+        refreshAll();
+    }
+
+    function addMatch(isMale) {
+        let bracket = isMale ? maleBracketStages : femaleBracketStages;
+        if (bracket[0]) bracket[0].matches.push({ p1: "", p2: "", score: "", winner: "" });
+        saveLocal();
+        refreshAll();
+    }
+
+    function setAdminMode(enable) {
+        isAdmin = enable;
+        document.getElementById('loginPanel').classList.toggle('hidden', enable);
+        document.getElementById('adminPanel').classList.toggle('hidden', !enable);
+        if (enable) {
+            loadLocal();
+            refreshAll();
+        }
+    }
+
+    // Обработчики
+    document.getElementById('enterBtn').onclick = () => {
+        if (document.getElementById('codeInput').value === 'BDMEPHI2026') setAdminMode(true);
+        else { let st = document.getElementById('loginStatus'); st.innerHTML = '❌ Неверный код'; st.className = 'status status-error'; setTimeout(() => st.innerHTML = '', 3000); }
+    };
+    document.getElementById('logoutBtn').onclick = () => setAdminMode(false);
+    document.getElementById('saveCloudBtn').onclick = publishToCloud;
+    document.getElementById('loadCloudBtn').onclick = loadFromCloud;
+    document.getElementById('resetLocalBtn').onclick = resetAll;
+    document.getElementById('addMaleGroupBtn').onclick = () => addGroup(true);
+    document.getElementById('addFemaleGroupBtn').onclick = () => addGroup(false);
+    document.getElementById('addMaleMatchBtn').onclick = () => addMatch(true);
+    document.getElementById('addFemaleMatchBtn').onclick = () => addMatch(false);
+
+    setAdminMode(false);
+</script>
+</body>
+</html>
