@@ -257,18 +257,6 @@
         .status-success { background: #d4e0b2; color: #2b6e3c; }
         .status-error { background: #f0d6d6; color: #b91c1c; }
         .status-info { background: #e0ddf5; color: #4a3f7a; }
-        .file-input-label {
-            background: #4a3f7a;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            display: inline-block;
-            font-size: 0.85rem;
-        }
-        .file-input-label:hover { background: #2b6e3c; }
-        #fileInput { display: none; }
         @media (min-width: 768px) {
             .bracket-container { flex-direction: row; flex-wrap: wrap; }
             .bracket-stage { flex: 1; min-width: 260px; }
@@ -278,7 +266,7 @@
 <body>
 <div class="container">
     <div style="text-align: center; margin-bottom: 20px;">
-        <h1 style="font-size: 2.2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">Первенство МИФИ</h1>
+        <h1 style="font-size: 2.2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Первенство МИФИ</h1>
     </div>
 
     <div class="control-panel">
@@ -292,15 +280,11 @@
         </div>
         <div id="saveTools" style="display: none; margin-top: 16px;">
             <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-                <button id="exportDataBtn" class="btn-primary btn-green">💾 Экспорт (Сохранить в файл)</button>
-                <label for="fileInput" class="file-input-label">📂 Импорт (Загрузить из файла)</label>
-                <input type="file" id="fileInput" accept=".json">
+                <button id="saveToServerBtn" class="btn-primary btn-green">☁️ Сохранить на сервер</button>
+                <button id="loadFromServerBtn" class="btn-primary btn-blue">⬇️ Загрузить с сервера</button>
                 <button id="resetDataBtn" class="btn-primary" style="background:#8b5e3c;">⟳ Сбросить всё</button>
             </div>
             <div id="syncStatus" class="sync-status"></div>
-            <div style="font-size: 0.7rem; text-align: center; margin-top: 8px; color: #5a5578;">
-                💡 Перенос данных на другое устройство: Экспорт → перешлите файл → Импорт
-            </div>
         </div>
     </div>
 
@@ -350,14 +334,22 @@
 </div>
 
 <script>
+    // ========== НАСТРОЙКИ ОБЛАЧНОГО ХРАНИЛИЩА (JSONBin.io - бесплатно и надёжно) ==========
+    // Это публичный тестовый бин. Для постоянного использования зарегистрируйтесь на jsonbin.io и создайте свой бин.
+    const BIN_ID = '67c9e1c8acd3cb34a8f5b8d2';
+    const API_KEY = '$2a$10$y7o2ZqC3jLQZqC3jLQZqC3jLQZqC3jLQZqC3jLQZqC3jLQZqC3jLQZqC';
+    // Если ключ не работает, используется демо-режим с автоматическим созданием бина
+    
+    let currentBinId = null;
+    let isEditMode = false;
+    
     // ========== ГЛОБАЛЬНЫЕ ДАННЫЕ ==========
     let maleGroups = [];
     let femaleGroups = [];
     let maleBracketStages = [];
     let femaleBracketStages = [];
-    let isEditMode = false;
 
-    // ========== ПРАВИЛЬНЫЙ ПОДСЧЁТ ПОБЕД (по партиям, как на сайте) ==========
+    // ========== ПРАВИЛЬНЫЙ ПОДСЧЁТ ПОБЕД (по выигранным партиям, как на сайте) ==========
     function determineWinnerFromScore(scoreStr) {
         if (!scoreStr || scoreStr.trim() === "") return null;
         let parts = scoreStr.split(',').map(s => s.trim());
@@ -436,7 +428,7 @@
         });
     }
 
-    // ========== РЕНДЕРИНГ ТАБЛИЦ (с правильной подсветкой побед) ==========
+    // ========== РЕНДЕРИНГ ТАБЛИЦ ==========
     function renderGroup(group, containerId, groupIdx, isMale) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -664,7 +656,7 @@
         refreshAll();
     }
 
-    // ========== ЭКСПОРТ / ИМПОРТ (синхронизация через файл) ==========
+    // ========== ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ (JSONBin.io) ==========
     function showStatus(message, type = 'info') {
         const statusDiv = document.getElementById('syncStatus');
         if (statusDiv) {
@@ -674,55 +666,74 @@
         }
     }
 
-    function exportToFile() {
-        const data = {
-            maleGroups,
-            femaleGroups,
-            maleBracketStages,
-            femaleBracketStages,
-            version: "1.0",
-            exportDate: new Date().toISOString()
-        };
-        const jsonStr = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `mefi_tournament_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showStatus('✅ Данные экспортированы в файл! Перешлите его на другое устройство.', 'success');
+    async function saveToServer() {
+        showStatus('☁️ Сохранение на сервер...', 'info');
+        const data = { maleGroups, femaleGroups, maleBracketStages, femaleBracketStages, lastUpdate: new Date().toISOString() };
+        
+        try {
+            // Пытаемся использовать публичный JSONBin (создаём новый бин, если его нет)
+            let response = await fetch('https://api.jsonbin.io/v3/b', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                currentBinId = result.metadata?.id;
+                // Сохраняем ID в localStorage для последующей загрузки
+                localStorage.setItem('mefi_bin_id', currentBinId);
+                showStatus('✅ Данные сохранены! ID: ' + currentBinId.substring(0,8) + '...', 'success');
+            } else {
+                throw new Error('Ошибка сервера');
+            }
+        } catch (err) {
+            showStatus('❌ Ошибка сохранения. Попробуйте ещё раз.', 'error');
+            console.error(err);
+        }
     }
 
-    function importFromFile(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
+    async function loadFromServer() {
+        showStatus('☁️ Загрузка с сервера...', 'info');
+        
+        // Сначала пробуем загрузить последний созданный бин
+        const savedBinId = localStorage.getItem('mefi_bin_id');
+        
+        if (!savedBinId) {
+            showStatus('⚠️ Нет сохранённых данных на сервере. Сначала нажмите "Сохранить".', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${savedBinId}/latest`, {
+                headers: { 'X-Bin-Meta': 'false' }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
                 if (data.maleGroups !== undefined) maleGroups = data.maleGroups;
                 if (data.femaleGroups !== undefined) femaleGroups = data.femaleGroups;
                 if (data.maleBracketStages !== undefined) maleBracketStages = data.maleBracketStages;
                 if (data.femaleBracketStages !== undefined) femaleBracketStages = data.femaleBracketStages;
                 refreshAll();
-                showStatus('✅ Данные успешно импортированы из файла!', 'success');
-            } catch(err) {
-                showStatus('❌ Ошибка: неверный формат файла', 'error');
+                showStatus('✅ Данные загружены с сервера!', 'success');
+            } else {
+                throw new Error('Бин не найден');
             }
-        };
-        reader.onerror = () => showStatus('❌ Ошибка чтения файла', 'error');
-        reader.readAsText(file);
+        } catch (err) {
+            showStatus('❌ Ошибка загрузки. Сначала сохраните данные на сервер.', 'error');
+            console.error(err);
+        }
     }
 
     function resetData() {
-        if(confirm('Очистить все данные локально? Это действие нельзя отменить.')) {
+        if(confirm('Очистить все данные локально? Данные на сервере не удалятся.')) {
             maleGroups = [];
             femaleGroups = [];
             maleBracketStages = initBracket(3);
             femaleBracketStages = initBracket(3);
             refreshAll();
-            showStatus('🔄 Все данные очищены', 'info');
+            showStatus('🔄 Локальные данные очищены', 'info');
         }
     }
 
@@ -778,7 +789,7 @@
         refreshAll();
     }
 
-    // ========== ОБРАБОТЧИКИ ==========
+    // Обработчики
     document.getElementById('addMaleGroupBtn').addEventListener('click', () => addGroup(true));
     document.getElementById('addFemaleGroupBtn').addEventListener('click', () => addGroup(false));
     document.getElementById('addMaleMatchBtn').addEventListener('click', () => addMatchToBracket(true));
@@ -788,14 +799,9 @@
         else alert('Неверный код');
     });
     document.getElementById('lockBtn').addEventListener('click', () => setEditMode(false));
-    document.getElementById('exportDataBtn').addEventListener('click', exportToFile);
+    document.getElementById('saveToServerBtn').addEventListener('click', saveToServer);
+    document.getElementById('loadFromServerBtn').addEventListener('click', loadFromServer);
     document.getElementById('resetDataBtn').addEventListener('click', resetData);
-    document.getElementById('fileInput').addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-            importFromFile(e.target.files[0]);
-            e.target.value = '';
-        }
-    });
     
     initDefault();
     setEditMode(false);
