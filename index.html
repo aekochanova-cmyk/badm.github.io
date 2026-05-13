@@ -1,11 +1,9 @@
-Вот страница с двумя пустыми таблицами и двумя пустыми олимпийскими сетками, как вы просили. Редактирование доступно после ввода кода BADMMIPHI2026.
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Первенство МИФИ · Редактор таблиц</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Первенство МИФИ · Конструктор турнира</title>
     <style>
         * {
             margin: 0;
@@ -14,623 +12,634 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Roboto', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
             background: #bfbfdb;
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 16px 12px 40px;
         }
 
-        /* Главный контейнер */
-        .tournament-wrapper {
+        .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.94);
-            border-radius: 48px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
-            padding: 1.8rem 2rem 2rem;
         }
 
-        /* Заголовок */
-        .main-title {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .main-title h1 {
-            font-size: 3rem;
-            background: linear-gradient(135deg, #0b0829, #413a7c);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        /* Стили таблиц */
-        .section {
-            margin-bottom: 3rem;
+        /* Карточки */
+        .card {
             background: white;
-            border-radius: 28px;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 32px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
             overflow: hidden;
         }
-        .section-header {
+        .card-header {
             background: #0b0829;
             color: white;
-            padding: 1rem 1.8rem;
-            font-size: 1.5rem;
+            padding: 16px 20px;
+            font-size: 1.3rem;
             font-weight: 700;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
         }
-        .section-header span:first-child {
-            letter-spacing: -0.3px;
-        }
-        .btn-mini {
-            background: #f0f0f5;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            cursor: pointer;
-            color: #0b0829;
-        }
-        .table-wrapper {
-            overflow-x: auto;
-            padding: 0.5rem 1rem 1.5rem 1rem;
-        }
-        .editable-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            min-width: 500px;
-        }
-        .editable-table th {
-            background: #eae9fc;
-            padding: 12px 8px;
-            text-align: center;
-            font-weight: 700;
-            border-bottom: 2px solid #cbc8e0;
-        }
-        .editable-table td {
-            padding: 10px 8px;
-            text-align: center;
-            border-bottom: 1px solid #ececf0;
-        }
-        .player-name-cell {
-            font-weight: 600;
-            text-align: left !important;
-            background: #faf9ff;
-        }
-        .edit-input {
-            width: 100%;
-            padding: 8px 8px;
-            border-radius: 14px;
-            border: 2px solid #cbd5e1;
-            font-family: monospace;
-            font-size: 0.85rem;
-            background: #fffef7;
-            transition: 0.1s;
-        }
-        .edit-input:focus {
-            outline: none;
-            border-color: #0b0829;
-            box-shadow: 0 0 0 2px rgba(11,8,41,0.2);
+        .card-body {
+            padding: 20px;
         }
 
-        /* Блоки олимпийской сетки */
-        .bracket-container {
+        /* Панель управления размерами */
+        .size-panel {
             display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            padding: 1.5rem 1rem;
-        }
-        .bracket-col {
-            flex: 1;
-            min-width: 240px;
-            background: #faf9ff;
-            border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-        }
-        .bracket-match {
-            background: white;
-            border-radius: 20px;
-            padding: 14px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2defc;
-        }
-        .match-players {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .match-players input {
-            width: 45%;
-            text-align: center;
-        }
-        .match-score input, .match-winner input {
-            width: 100%;
-            margin-top: 6px;
-        }
-        .bracket-title {
-            font-weight: 800;
-            margin-bottom: 16px;
-            font-size: 1.1rem;
-            color: #0b0829;
-            border-left: 4px solid #0b0829;
-            padding-left: 12px;
-        }
-
-        /* Админ-панель */
-        .admin-panel {
-            margin-top: 40px;
-            background: #f8f7fc;
-            border-radius: 40px;
-            padding: 18px 28px;
-            border: 2px dashed #8f89c2;
-        }
-        .admin-unlock {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
+ flex-wrap: wrap;
             gap: 20px;
+            background: #f5f4fe;
+            border-radius: 28px;
+            padding: 18px;
+            margin-bottom: 24px;
         }
-        .admin-unlock input {
-            flex: 2;
-            padding: 12px 20px;
-            border-radius: 60px;
+        .size-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        .size-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #0b0829;
+        }
+        .size-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 40px;
             border: 2px solid #cbc8e0;
             font-size: 1rem;
-            font-family: monospace;
-            letter-spacing: 1px;
+            text-align: center;
         }
-        .admin-unlock button {
+        .btn-primary {
             background: #0b0829;
             color: white;
             border: none;
-            padding: 12px 28px;
-            border-radius: 60px;
+            padding: 10px 24px;
+            border-radius: 40px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
         }
-        .admin-unlock button:hover {
-            background: #3b3570;
-            transform: scale(0.97);
-        }
-        .edit-tools {
-            margin-top: 20px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-        }
-        .save-all-btn {
-            background: #2b6e3c;
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-secondary {
+            background: #6c5b7b;
             color: white;
             border: none;
-            padding: 10px 22px;
+            padding: 8px 20px;
             border-radius: 40px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
         }
-        .reset-btn {
-            background: #8b5e3c;
+
+        /* Таблицы */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-        .status-badge {
+        .tournament-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 500px;
+        }
+        .tournament-table th {
+            background: #eae9fc;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .tournament-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid #ececf0;
+        }
+        .player-name-td {
+            font-weight: 600;
+            text-align: left !important;
+            background: #faf9ff;
+        }
+        .editable-input {
+            width: 100%;
+            padding: 8px 6px;
+            border-radius: 14px;
+            border: 1.5px solid #cbd5e1;
             font-size: 0.8rem;
-            background: #e0ddf5;
-            padding: 6px 18px;
-            border-radius: 30px;
-            font-weight: 500;
+            font-family: inherit;
+        }
+        .score-badge {
+            font-family: monospace;
+            background: #f1efff;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
         }
 
-        @media (max-width: 760px) {
-            .tournament-wrapper { padding: 1rem; }
-            .bracket-container { flex-direction: column; align-items: stretch; }
+        /* Олимпийские сетки */
+        .bracket-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .bracket-stage {
+            background: #faf9ff;
+            border-radius: 24px;
+            padding: 16px;
+        }
+        .stage-title {
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 4px solid #0b0829;
+        }
+        .matches-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .match-card {
+            background: white;
+            border-radius: 20px;
+            padding: 14px;
+            border: 1px solid #e2defc;
+        }
+        .match-players-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .match-players-row input, .match-players-row span {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+        }
+        .match-score-row {
+            margin: 8px 0;
+        }
+        .match-score-row input, .match-score-row span {
+            width: 100%;
+            text-align: center;
+            background: #f1efff;
+            padding: 8px;
+            border-radius: 30px;
+            font-family: monospace;
+        }
+        .winner-row {
+            margin-top: 8px;
+        }
+        .winner-badge {
+            background: #0b0829;
+            color: white;
+            padding: 6px;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            display: block;
+        }
+
+        /* Режим редактирования */
+        .edit-mode-badge {
+            background: #d4e0b2;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .readonly-badge {
+            background: #e0ddf5;
+        }
+        .admin-panel {
+            background: #f8f7fc;
+            border-radius: 32px;
+            padding: 18px;
+            border: 2px dashed #8f89c2;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .code-input {
+            flex: 2;
+            padding: 10px 16px;
+            border-radius: 60px;
+            border: 2px solid #cbc8e0;
+            font-family: monospace;
+        }
+        button {
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .bracket-container { flex-direction: row; flex-wrap: wrap; }
+            .bracket-stage { flex: 1; min-width: 250px; }
+        }
+        .footer-note {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #4a457a;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 8px;
+            color: #b91c1c;
         }
     </style>
 </head>
 <body>
-
-<div class="tournament-wrapper">
-    <div class="main-title">
-        <h1>🏸 Первенство МИФИ</h1>
+<div class="container">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 2rem; background: linear-gradient(135deg,#0b0829,#413a7c); background-clip: text; -webkit-background-clip: text; color: transparent;">🏸 Первенство МИФИ</h1>
+        <p style="color: #2d2a5e;">Конструктор турнира — настрой размеры, затем заполняй игроков и счёт</p>
     </div>
 
-    <!-- БЛОК 1: ТАБЛИЦА №1 (ГРУППА/СЕТКА) -->
-    <div class="section" id="table1Section">
-        <div class="section-header">
+    <!-- Панель настройки размеров (видна всегда, но генерирует заново) -->
+    <div class="size-panel">
+        <div class="size-group">
+            <label>📊 Таблица 1 (строк)</label>
+            <input type="number" id="rowsTable1" min="0" max="30" value="4">
+        </div>
+        <div class="size-group">
+            <label>📊 Таблица 2 (строк)</label>
+            <input type="number" id="rowsTable2" min="0" max="30" value="4">
+        </div>
+        <div class="size-group">
+            <label>🏆 Олимпийка 1 (матчей в этапе)</label>
+            <input type="number" id="matchesStage1" min="0" max="20" value="3" placeholder="матчей/этап">
+        </div>
+        <div class="size-group">
+            <label>🥈 Олимпийка 2 (матчей в этапе)</label>
+            <input type="number" id="matchesStage2" min="0" max="20" value="3">
+        </div>
+        <div class="size-group">
+            <button id="applySizesBtn" class="btn-primary" style="margin-top: 28px;">✨ Создать схемы</button>
+        </div>
+    </div>
+
+    <!-- ТАБЛИЦА 1 -->
+    <div class="card">
+        <div class="card-header">
             <span>📋 Таблица 1 · Групповой этап</span>
-            <button class="btn-mini" id="addRowTable1" style="display: none;">➕ Добавить строку</button>
+            <button id="addRowTable1Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить строку</button>
         </div>
-        <div class="table-wrapper">
-            <table class="editable-table" id="table1">
-                <thead>
-                    <tr id="table1-header"></tr>
-                </thead>
-                <tbody id="table1-body"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- БЛОК 2: ОЛИМПИЙКА 1 (СЕТКА ПЛЕЙ-ОФФ) -->
-    <div class="section" id="bracket1Section">
-        <div class="section-header">
-            <span>🏆 Олимпийская сетка 1 · Плей-офф A</span>
-            <button class="btn-mini" id="addMatchBracket1" style="display: none;">➕ Добавить матч</button>
-        </div>
-        <div id="bracket1-container" class="bracket-container"></div>
-    </div>
-
-    <!-- БЛОК 3: ТАБЛИЦА №2 (РЕЙТИНГ/ДОП) -->
-    <div class="section" id="table2Section">
-        <div class="section-header">
-            <span>📊 Таблица 2 · Рейтинг / Доп. показатели</span>
-            <button class="btn-mini" id="addRowTable2" style="display: none;">➕ Добавить строку</button>
-        </div>
-        <div class="table-wrapper">
-            <table class="editable-table" id="table2">
-                <thead>
-                    <tr id="table2-header"></tr>
-                </thead>
-                <tbody id="table2-body"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- БЛОК 4: ОЛИМПИЙКА 2 (ВТОРАЯ СЕТКА) -->
-    <div class="section" id="bracket2Section">
-        <div class="section-header">
-            <span>🥈 Олимпийская сетка 2 · Утешительный / Доп. турнир</span>
-            <button class="btn-mini" id="addMatchBracket2" style="display: none;">➕ Добавить матч</button>
-        </div>
-        <div id="bracket2-container" class="bracket-container"></div>
-    </div>
-
-    <!-- Панель администратора -->
-    <div class="admin-panel" id="adminPanel">
-        <div class="admin-unlock">
-            <div class="status-badge" id="editStatusLabel">🔒 Режим просмотра</div>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <input type="text" id="secretCodeInput" placeholder="Введите код BADMMIPHI2026" autocomplete="off">
-                <button id="unlockBtn">🔑 Разблокировать</button>
-                <button id="lockBtn" style="background:#6c5b7b; display:none;">🚪 Закрыть редактирование</button>
+        <div class="card-body">
+            <div class="table-wrapper">
+                <table class="tournament-table" id="table1">
+                    <thead id="table1Head"></thead>
+                    <tbody id="table1Body"></tbody>
+                </table>
             </div>
         </div>
-        <div id="editToolbar" style="display: none;" class="edit-tools">
-            <button id="saveAllBtn" class="save-all-btn">💾 Сохранить все изменения</button>
-            <button id="resetDefaultBtn" class="save-all-btn reset-btn">⟳ Сбросить (очистить всё)</button>
+    </div>
+
+    <!-- ОЛИМПИЙСКАЯ СЕТКА 1 -->
+    <div class="card">
+        <div class="card-header">
+            <span>🏆 Олимпийская сетка 1 · Плей-офф A</span>
+            <button id="addMatchBracket1Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить матч</button>
+        </div>
+        <div class="card-body">
+            <div id="bracket1Stages" class="bracket-container"></div>
         </div>
     </div>
+
+    <!-- ТАБЛИЦА 2 -->
+    <div class="card">
+        <div class="card-header">
+            <span>📊 Таблица 2 · Рейтинг / Дополнительно</span>
+            <button id="addRowTable2Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить строку</button>
+        </div>
+        <div class="card-body">
+            <div class="table-wrapper">
+                <table class="tournament-table" id="table2">
+                    <thead id="table2Head"></thead>
+                    <tbody id="table2Body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОЛИМПИЙСКАЯ СЕТКА 2 -->
+    <div class="card">
+        <div class="card-header">
+            <span>🥈 Олимпийская сетка 2 · Утешительный турнир</span>
+            <button id="addMatchBracket2Btn" class="btn-secondary" style="background:#4a3f7a;">➕ Добавить матч</button>
+        </div>
+        <div class="card-body">
+            <div id="bracket2Stages" class="bracket-container"></div>
+        </div>
+    </div>
+
+    <!-- Админ-панель с кодом -->
+    <div class="admin-panel">
+        <div class="flex-between">
+            <div>
+                <span id="modeBadge" class="edit-mode-badge readonly-badge">🔒 Режим просмотра</span>
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <input type="text" id="adminCode" class="code-input" placeholder="Код BADMMIPHI2026">
+                <button id="unlockEditBtn" class="btn-primary">🔓 Включить редактирование</button>
+                <button id="lockEditBtn" class="btn-primary" style="background:#6c5b7b; display: none;">🔒 Выключить</button>
+            </div>
+        </div>
+        <div id="saveTools" style="display: none; margin-top: 18px; display: flex; gap: 12px; justify-content: flex-end;">
+            <button id="saveDataBtn" class="btn-primary" style="background:#2b6e3c;">💾 Сохранить все данные</button>
+            <button id="resetDataBtn" class="btn-primary" style="background:#8b5e3c;">⟳ Сбросить (очистить данные)</button>
+        </div>
+    </div>
+    <div class="footer-note">* В режиме редактирования можно менять любые ячейки и счёт. Кнопки +/- добавляют строки/матчи. Данные сохраняются локально.</div>
 </div>
 
 <script>
-    // ------------------- СТРУКТУРА ДАННЫХ (ПО УМОЛЧАНИЮ ВСЁ ПУСТОЕ) -------------------
-    let state = {
-        table1: { headers: ["#", "Игрок / Команда", "Игры", "Победы", "Поражения", "Очки"], rows: [] },   // пустые строки
-        table2: { headers: ["Место", "Игрок", "Рейтинг", "Клуб", "Примечание"], rows: [] },
-        bracket1: { columns: [
-            { name: "Четвертьфиналы", matches: [] },
-            { name: "Полуфиналы", matches: [] },
-            { name: "Финал / Матч за 3-е", matches: [] }
-        ] },
-        bracket2: { columns: [
-            { name: "1/4 финала (утешит.)", matches: [] },
-            { name: "Полуфинал B", matches: [] },
-            { name: "Финальный раунд", matches: [] }
-        ] }
-    };
-
+    // ---------- ГЛОБАЛЬНЫЕ ДАННЫЕ ----------
+    let table1Data = { headers: ["#", "Игрок / Команда", "Игры", "Победы", "Поражения", "Очки"], rows: [] };
+    let table2Data = { headers: ["Место", "Игрок", "Рейтинг", "Клуб", "Примечание"], rows: [] };
+    let bracket1Data = { stages: [] };  // [{ name: "Четвертьфинал", matches: [{p1,p2,score,winner}] }]
+    let bracket2Data = { stages: [] };
+    
     let isEditMode = false;
 
-    // ---------- РЕНДЕР ТАБЛИЦ (полностью редактируемые инпуты либо текст) ----------
-    function renderTable(tableId, dataObj) {
-        const theadRow = document.getElementById(`${tableId}-header`);
-        const tbody = document.getElementById(`${tableId}-body`);
-        if (!theadRow || !tbody) return;
+    // Настройки количества по умолчанию
+    let config = { table1Rows: 4, table2Rows: 4, bracket1MatchesPerStage: 3, bracket2MatchesPerStage: 3 };
+
+    // Функция инициализации структур согласно размерам
+    function initStructuresBySizes() {
+        // Таблицы: заполняем пустыми строками
+        table1Data.rows = [];
+        for (let i = 0; i < config.table1Rows; i++) {
+            table1Data.rows.push(Array(table1Data.headers.length).fill(''));
+        }
+        table2Data.rows = [];
+        for (let i = 0; i < config.table2Rows; i++) {
+            table2Data.rows.push(Array(table2Data.headers.length).fill(''));
+        }
+        // Олимпийка 1: 3 этапа (четвертьфинал, полуфинал, финал) с заданным кол-вом матчей
+        bracket1Data.stages = [
+            { name: "Четвертьфиналы", matches: [] },
+            { name: "Полуфиналы", matches: [] },
+            { name: "Финал / Матч за 3 место", matches: [] }
+        ];
+        for (let i = 0; i < config.bracket1MatchesPerStage; i++) {
+            bracket1Data.stages[0].matches.push({ p1: "", p2: "", score: "", winner: "" });
+        }
+        for (let i = 0; i < Math.ceil(config.bracket1MatchesPerStage/2); i++) {
+            bracket1Data.stages[1].matches.push({ p1: "", p2: "", score: "", winner: "" });
+        }
+        bracket1Data.stages[2].matches.push({ p1: "", p2: "", score: "", winner: "" });
+        
+        // Олимпийка 2
+        bracket2Data.stages = [
+            { name: "1/4 финала (утеш.)", matches: [] },
+            { name: "Полуфиналы B", matches: [] },
+            { name: "Финальный матч", matches: [] }
+        ];
+        for (let i = 0; i < config.bracket2MatchesPerStage; i++) {
+            bracket2Data.stages[0].matches.push({ p1: "", p2: "", score: "", winner: "" });
+        }
+        for (let i = 0; i < Math.ceil(config.bracket2MatchesPerStage/2); i++) {
+            bracket2Data.stages[1].matches.push({ p1: "", p2: "", score: "", winner: "" });
+        }
+        bracket2Data.stages[2].matches.push({ p1: "", p2: "", score: "", winner: "" });
+    }
+
+    // Рендер таблицы (с поддержкой редактирования)
+    function renderTable(tableId, dataObj, tbodyId, theadId) {
+        const thead = document.getElementById(theadId);
+        const tbody = document.getElementById(tbodyId);
+        if (!thead || !tbody) return;
+        thead.innerHTML = '';
         const headers = dataObj.headers;
-        theadRow.innerHTML = '';
-        headers.forEach(h => {
-            const th = document.createElement('th');
-            th.textContent = h;
-            theadRow.appendChild(th);
-        });
+        const trHead = document.createElement('tr');
+        headers.forEach(h => { let th = document.createElement('th'); th.textContent = h; trHead.appendChild(th); });
+        if (isEditMode) { let thDel = document.createElement('th'); thDel.textContent = '🗑'; trHead.appendChild(thDel); }
+        thead.appendChild(trHead);
+        
         tbody.innerHTML = '';
-        const rows = dataObj.rows;
-        for (let i = 0; i < rows.length; i++) {
+        dataObj.rows.forEach((row, rowIdx) => {
             const tr = document.createElement('tr');
-            const rowData = rows[i];
             for (let colIdx = 0; colIdx < headers.length; colIdx++) {
                 const td = document.createElement('td');
-                const cellValue = (rowData[colIdx] !== undefined && rowData[colIdx] !== null) ? rowData[colIdx] : '';
+                const val = row[colIdx] || '';
                 if (isEditMode) {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.className = 'edit-input';
-                    input.value = cellValue;
-                    input.setAttribute('data-table', tableId);
-                    input.setAttribute('data-row', i);
-                    input.setAttribute('data-col', colIdx);
-                    input.addEventListener('change', function(e) {
-                        state[tableId].rows[i][colIdx] = e.target.value;
-                    });
-                    td.appendChild(input);
+                    const inp = document.createElement('input');
+                    inp.type = 'text';
+                    inp.value = val;
+                    inp.className = 'editable-input';
+                    inp.addEventListener('change', (e) => { dataObj.rows[rowIdx][colIdx] = e.target.value; });
+                    td.appendChild(inp);
                 } else {
-                    td.textContent = cellValue;
-                    if (colIdx === 0) td.classList.add('player-name-cell');
+                    td.textContent = val;
+                    if (colIdx === 0 || colIdx === 1) td.classList.add('player-name-td');
                 }
                 tr.appendChild(td);
             }
-            // Кнопка удаления строки (только в режиме редактирования)
             if (isEditMode) {
                 const tdDel = document.createElement('td');
                 const delBtn = document.createElement('button');
-                delBtn.textContent = '🗑';
-                delBtn.style.background = '#f0eef5';
-                delBtn.style.border = 'none';
-                delBtn.style.borderRadius = '40px';
-                delBtn.style.cursor = 'pointer';
-                delBtn.style.padding = '4px 12px';
-                delBtn.onclick = () => {
-                    state[tableId].rows.splice(i, 1);
-                    renderTable(tableId, state[tableId]);
-                };
+                delBtn.textContent = '✖';
+                delBtn.className = 'delete-btn';
+                delBtn.onclick = () => { dataObj.rows.splice(rowIdx, 1); renderTable(tableId, dataObj, tbodyId, theadId); };
                 tdDel.appendChild(delBtn);
                 tr.appendChild(tdDel);
             }
             tbody.appendChild(tr);
-        }
-        // Добавление пустой строки в режиме редактирования через кнопку
+        });
     }
 
-    // Рендер олимпийских сеток (полностью пустые, только редактируемые поля)
-    function renderBracket(bracketId, bracketData) {
-        const container = document.getElementById(`${bracketId}-container`);
+    // Рендер олимпийской сетки (динамические этапы)
+    function renderBracket(containerId, bracketData) {
+        const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = '';
-        bracketData.columns.forEach((col, colIdx) => {
-            const colDiv = document.createElement('div');
-            colDiv.className = 'bracket-col';
-            const titleDiv = document.createElement('div');
-            titleDiv.className = 'bracket-title';
-            titleDiv.textContent = col.name;
-            colDiv.appendChild(titleDiv);
-            const matches = col.matches;
-            for (let mIdx = 0; mIdx < matches.length; mIdx++) {
-                const match = matches[mIdx];
-                const matchDiv = document.createElement('div');
-                matchDiv.className = 'bracket-match';
+        bracketData.stages.forEach((stage, stageIdx) => {
+            const stageDiv = document.createElement('div');
+            stageDiv.className = 'bracket-stage';
+            stageDiv.innerHTML = `<div class="stage-title">${stage.name}</div><div class="matches-list" id="matchesList-${containerId}-${stageIdx}"></div>`;
+            container.appendChild(stageDiv);
+            const matchesContainer = stageDiv.querySelector('.matches-list');
+            stage.matches.forEach((match, matchIdx) => {
+                const matchCard = document.createElement('div');
+                matchCard.className = 'match-card';
                 if (isEditMode) {
-                    // Поля: игрок1, игрок2, счёт, победитель
-                    const p1Input = document.createElement('input');
-                    p1Input.type = 'text';
-                    p1Input.placeholder = 'Игрок / пара 1';
-                    p1Input.className = 'edit-input';
-                    p1Input.value = match.p1 || '';
-                    p1Input.style.width = '48%';
-                    const p2Input = document.createElement('input');
-                    p2Input.type = 'text';
-                    p2Input.placeholder = 'Игрок / пара 2';
-                    p2Input.className = 'edit-input';
-                    p2Input.value = match.p2 || '';
-                    p2Input.style.width = '48%';
-                    const playersDiv = document.createElement('div');
-                    playersDiv.className = 'match-players';
-                    playersDiv.appendChild(p1Input);
-                    playersDiv.appendChild(p2Input);
-                    
-                    const scoreInput = document.createElement('input');
-                    scoreInput.type = 'text';
-                    scoreInput.placeholder = 'Счёт (напр. 21:15, 18:21)';
-                    scoreInput.className = 'edit-input';
-                    scoreInput.value = match.score || '';
-                    const winnerInput = document.createElement('input');
-                    winnerInput.type = 'text';
-                    winnerInput.placeholder = 'Победитель';
-                    winnerInput.className = 'edit-input';
-                    winnerInput.value = match.winner || '';
-                    
-                    matchDiv.appendChild(playersDiv);
-                    matchDiv.appendChild(scoreInput);
-                    matchDiv.appendChild(winnerInput);
-                    
-                    // Кнопка удалить матч
-                    const delBtn = document.createElement('button');
-                    delBtn.textContent = '✖ Удалить матч';
-                    delBtn.style.marginTop = '10px';
-                    delBtn.style.background = '#e0dbef';
-                    delBtn.style.border = 'none';
-                    delBtn.style.borderRadius = '30px';
-                    delBtn.style.padding = '5px 10px';
-                    delBtn.style.cursor = 'pointer';
-                    delBtn.style.fontSize = '0.7rem';
-                    delBtn.onclick = () => {
-                        bracketData.columns[colIdx].matches.splice(mIdx, 1);
-                        renderBracket(bracketId, bracketData);
-                    };
-                    matchDiv.appendChild(delBtn);
-                    
-                    // сохранение изменений
-                    p1Input.addEventListener('change', (e) => { match.p1 = e.target.value; });
-                    p2Input.addEventListener('change', (e) => { match.p2 = e.target.value; });
-                    scoreInput.addEventListener('change', (e) => { match.score = e.target.value; });
-                    winnerInput.addEventListener('change', (e) => { match.winner = e.target.value; });
+                    matchCard.innerHTML = `
+                        <div class="match-players-row">
+                            <input type="text" placeholder="Игрок/пара 1" value="${escapeHtml(match.p1)}" data-match="${stageIdx},${matchIdx},p1">
+                            <span>vs</span>
+                            <input type="text" placeholder="Игрок/пара 2" value="${escapeHtml(match.p2)}" data-match="${stageIdx},${matchIdx},p2">
+                        </div>
+                        <div class="match-score-row">
+                            <input type="text" placeholder="Счёт (21:15, 18:21, 21:12)" value="${escapeHtml(match.score)}" data-match="${stageIdx},${matchIdx},score">
+                        </div>
+                        <div class="winner-row">
+                            <input type="text" placeholder="Победитель" value="${escapeHtml(match.winner)}" data-match="${stageIdx},${matchIdx},winner" style="width:100%; padding:8px; border-radius:30px;">
+                        </div>
+                        <button class="delete-btn" style="margin-top:8px;" data-del="${stageIdx},${matchIdx}">🗑 Удалить матч</button>
+                    `;
                 } else {
-                    // режим просмотра
-                    const playersSpan = document.createElement('div');
-                    playersSpan.className = 'match-players';
-                    playersSpan.innerHTML = `<span>${escapeHtml(match.p1 || '—')}</span> <span>⚡</span> <span>${escapeHtml(match.p2 || '—')}</span>`;
-                    const scoreSpan = document.createElement('div');
-                    scoreSpan.className = 'match-score';
-                    scoreSpan.textContent = match.score || '—';
-                    const winnerSpan = document.createElement('div');
-                    winnerSpan.className = 'winner-badge';
-                    winnerSpan.textContent = match.winner ? `✅ ${match.winner}` : '—';
-                    matchDiv.appendChild(playersSpan);
-                    matchDiv.appendChild(scoreSpan);
-                    matchDiv.appendChild(winnerSpan);
+                    matchCard.innerHTML = `
+                        <div class="match-players-row">
+                            <span>${escapeHtml(match.p1) || '—'}</span> <span>⚡</span> <span>${escapeHtml(match.p2) || '—'}</span>
+                        </div>
+                        <div class="match-score-row"><span>${escapeHtml(match.score) || '—'}</span></div>
+                        <div class="winner-row"><div class="winner-badge">${match.winner ? '✅ '+escapeHtml(match.winner) : '—'}</div></div>
+                    `;
                 }
-                colDiv.appendChild(matchDiv);
-            }
-            // Добавление матча в столбец (если режим админа, но кнопки глобальные, но добавим локальную)
+                matchesContainer.appendChild(matchCard);
+            });
             if (isEditMode) {
-                const addLocalBtn = document.createElement('button');
-                addLocalBtn.textContent = '+ Добавить матч';
-                addLocalBtn.style.background = '#eae5fc';
-                addLocalBtn.style.border = 'none';
-                addLocalBtn.style.borderRadius = '30px';
-                addLocalBtn.style.padding = '6px 12px';
-                addLocalBtn.style.marginTop = '12px';
-                addLocalBtn.style.cursor = 'pointer';
-                addLocalBtn.onclick = () => {
-                    bracketData.columns[colIdx].matches.push({ p1: '', p2: '', score: '', winner: '' });
-                    renderBracket(bracketId, bracketData);
+                const addMatchBtn = document.createElement('button');
+                addMatchBtn.textContent = '+ Добавить матч в этот этап';
+                addMatchBtn.style.marginTop = '12px';
+                addMatchBtn.style.background = '#eae5fc';
+                addMatchBtn.style.border = 'none';
+                addMatchBtn.style.borderRadius = '40px';
+                addMatchBtn.style.padding = '8px';
+                addMatchBtn.style.fontWeight = '600';
+                addMatchBtn.onclick = () => {
+                    bracketData.stages[stageIdx].matches.push({ p1: "", p2: "", score: "", winner: "" });
+                    renderBracket(containerId, bracketData);
                 };
-                colDiv.appendChild(addLocalBtn);
+                stageDiv.appendChild(addMatchBtn);
             }
-            container.appendChild(colDiv);
         });
+        // Привязываем события для инпутов в режиме редактирования
+        if (isEditMode) {
+            document.querySelectorAll(`#${containerId} input[data-match]`).forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    const [stageIdx, matchIdx, field] = inp.getAttribute('data-match').split(',');
+                    if (bracketData.stages[stageIdx] && bracketData.stages[stageIdx].matches[matchIdx]) {
+                        bracketData.stages[stageIdx].matches[matchIdx][field] = inp.value;
+                    }
+                });
+            });
+            document.querySelectorAll(`#${containerId} button[data-del]`).forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const [stageIdx, matchIdx] = btn.getAttribute('data-del').split(',');
+                    if (bracketData.stages[stageIdx] && bracketData.stages[stageIdx].matches[matchIdx]) {
+                        bracketData.stages[stageIdx].matches.splice(matchIdx, 1);
+                        renderBracket(containerId, bracketData);
+                    }
+                });
+            });
+        }
     }
 
     function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-    // полный рендер всего
     function refreshAll() {
-        renderTable('table1', state.table1);
-        renderTable('table2', state.table2);
-        renderBracket('bracket1', state.bracket1);
-        renderBracket('bracket2', state.bracket2);
-        // показать/скрыть кнопки добавления строк таблиц
-        const btnsAddRow1 = document.getElementById('addRowTable1');
-        const btnsAddRow2 = document.getElementById('addRowTable2');
-        const addMatchB1 = document.getElementById('addMatchBracket1');
-        const addMatchB2 = document.getElementById('addMatchBracket2');
-        if (isEditMode) {
-            if (btnsAddRow1) btnsAddRow1.style.display = 'inline-block';
-            if (btnsAddRow2) btnsAddRow2.style.display = 'inline-block';
-            if (addMatchB1) addMatchB1.style.display = 'inline-block';
-            if (addMatchB2) addMatchB2.style.display = 'inline-block';
-        } else {
-            if (btnsAddRow1) btnsAddRow1.style.display = 'none';
-            if (btnsAddRow2) btnsAddRow2.style.display = 'none';
-            if (addMatchB1) addMatchB1.style.display = 'none';
-            if (addMatchB2) addMatchB2.style.display = 'none';
-        }
+        renderTable('table1', table1Data, 'table1Body', 'table1Head');
+        renderTable('table2', table2Data, 'table2Body', 'table2Head');
+        renderBracket('bracket1Stages', bracket1Data);
+        renderBracket('bracket2Stages', bracket2Data);
     }
 
-    // Добавление строк в таблицы
-    function addRowToTable(tableId, emptyRowTemplate) {
-        const colCount = state[tableId].headers.length;
-        const newRow = [];
-        for (let i=0; i<colCount; i++) newRow.push('');
-        state[tableId].rows.push(newRow);
+    // Сброс данных (очистка всех полей)
+    function resetAllData() {
+        initStructuresBySizes();
         refreshAll();
-    }
-
-    // Добавление матча в олимпийку (по умолчанию в первый столбец каждой сетки)
-    function addMatchToBracket(bracketId, columnIndex = 0) {
-        const bracket = state[bracketId];
-        if (bracket && bracket.columns[columnIndex]) {
-            bracket.columns[columnIndex].matches.push({ p1: '', p2: '', score: '', winner: '' });
-            refreshAll();
-        }
     }
 
     // Сохранение в localStorage
-    function saveToLocal() {
-        localStorage.setItem('MIFI_EmptyTournamentData', JSON.stringify(state));
-        alert('✅ Все данные сохранены! (локально)');
+    function saveAllToLocal() {
+        const fullState = { table1Data, table2Data, bracket1Data, bracket2Data, config };
+        localStorage.setItem('MIFI_CustomTournament', JSON.stringify(fullState));
+        alert('✅ Данные сохранены!');
     }
-
     function loadFromLocal() {
-        const saved = localStorage.getItem('MIFI_EmptyTournamentData');
+        const saved = localStorage.getItem('MIFI_CustomTournament');
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                if (parsed && parsed.table1 && parsed.table2 && parsed.bracket1 && parsed.bracket2) {
-                    state = parsed;
-                }
-            } catch(e) {}
+                table1Data = parsed.table1Data;
+                table2Data = parsed.table2Data;
+                bracket1Data = parsed.bracket1Data;
+                bracket2Data = parsed.bracket2Data;
+                config = parsed.config;
+                document.getElementById('rowsTable1').value = config.table1Rows;
+                document.getElementById('rowsTable2').value = config.table2Rows;
+                document.getElementById('matchesStage1').value = config.bracket1MatchesPerStage;
+                document.getElementById('matchesStage2').value = config.bracket2MatchesPerStage;
+                refreshAll();
+            } catch(e) { console.warn(e); }
         }
+    }
+
+    // Генерация новых структур по текущим значениям из панели
+    function applySizes() {
+        config.table1Rows = parseInt(document.getElementById('rowsTable1').value) || 0;
+        config.table2Rows = parseInt(document.getElementById('rowsTable2').value) || 0;
+        config.bracket1MatchesPerStage = parseInt(document.getElementById('matchesStage1').value) || 0;
+        config.bracket2MatchesPerStage = parseInt(document.getElementById('matchesStage2').value) || 0;
+        initStructuresBySizes();
         refreshAll();
     }
 
-    function resetToEmpty() {
-        if (confirm('Сбросить всё к абсолютно пустому состоянию (удалить все строки и матчи)?')) {
-            state = {
-                table1: { headers: ["#", "Игрок / Команда", "Игры", "Победы", "Поражения", "Очки"], rows: [] },
-                table2: { headers: ["Место", "Игрок", "Рейтинг", "Клуб", "Примечание"], rows: [] },
-                bracket1: { columns: [
-                    { name: "Четвертьфиналы", matches: [] },
-                    { name: "Полуфиналы", matches: [] },
-                    { name: "Финал / Матч за 3-е", matches: [] }
-                ] },
-                bracket2: { columns: [
-                    { name: "1/4 финала (утешит.)", matches: [] },
-                    { name: "Полуфинал B", matches: [] },
-                    { name: "Финальный раунд", matches: [] }
-                ] }
-            };
+    // Добавление строки в таблицу
+    function addRowToTable(dataObj) {
+        const newRow = Array(dataObj.headers.length).fill('');
+        dataObj.rows.push(newRow);
+        refreshAll();
+    }
+    function addMatchToBracket(bracketData, stageIndex = 0) {
+        if (bracketData.stages[stageIndex]) {
+            bracketData.stages[stageIndex].matches.push({ p1: "", p2: "", score: "", winner: "" });
             refreshAll();
-        }
+        } else { alert("Сначала создайте схему через кнопку 'Создать схемы'"); }
     }
 
     // Режим редактирования
     function setEditMode(enable) {
         isEditMode = enable;
-        const toolbar = document.getElementById('editToolbar');
-        const lockBtn = document.getElementById('lockBtn');
-        const unlockBtn = document.getElementById('unlockBtn');
-        const statusLabel = document.getElementById('editStatusLabel');
+        const modeSpan = document.getElementById('modeBadge');
+        const unlockBtn = document.getElementById('unlockEditBtn');
+        const lockBtn = document.getElementById('lockEditBtn');
+        const saveToolsDiv = document.getElementById('saveTools');
         if (enable) {
-            toolbar.style.display = 'flex';
-            lockBtn.style.display = 'inline-block';
+            modeSpan.innerHTML = '✏️ РЕЖИМ РЕДАКТИРОВАНИЯ (меняйте данные)';
+            modeSpan.style.background = '#d4e0b2';
             unlockBtn.style.display = 'none';
-            statusLabel.innerHTML = '✏️ РЕЖИМ РЕДАКТИРОВАНИЯ (можно вписывать данные)';
-            statusLabel.style.background = '#d4e0b2';
+            lockBtn.style.display = 'inline-block';
+            saveToolsDiv.style.display = 'flex';
         } else {
-            toolbar.style.display = 'none';
-            lockBtn.style.display = 'none';
+            modeSpan.innerHTML = '🔒 Режим просмотра (только чтение)';
+            modeSpan.style.background = '#e0ddf5';
             unlockBtn.style.display = 'inline-block';
-            statusLabel.innerHTML = '🔒 Режим просмотра (только чтение)';
-            statusLabel.style.background = '#e0ddf5';
+            lockBtn.style.display = 'none';
+            saveToolsDiv.style.display = 'none';
         }
         refreshAll();
     }
 
-    // Обработчики кнопок
-    document.getElementById('unlockBtn').addEventListener('click', () => {
-        const code = document.getElementById('secretCodeInput').value.trim();
-        if (code === 'BADMMIPHI2026') {
-            setEditMode(true);
-        } else {
-            alert('❌ Неверный код! Доступ только для чтения.');
-            setEditMode(false);
-        }
+    // Обработчики событий
+    document.getElementById('applySizesBtn').addEventListener('click', applySizes);
+    document.getElementById('addRowTable1Btn').addEventListener('click', () => addRowToTable(table1Data));
+    document.getElementById('addRowTable2Btn').addEventListener('click', () => addRowToTable(table2Data));
+    document.getElementById('addMatchBracket1Btn').addEventListener('click', () => addMatchToBracket(bracket1Data, 0));
+    document.getElementById('addMatchBracket2Btn').addEventListener('click', () => addMatchToBracket(bracket2Data, 0));
+    document.getElementById('unlockEditBtn').addEventListener('click', () => {
+        const code = document.getElementById('adminCode').value.trim();
+        if (code === 'BADMMIPHI2026') setEditMode(true);
+        else { alert('Неверный код! Доступ только для просмотра.'); setEditMode(false); }
     });
-    document.getElementById('lockBtn').addEventListener('click', () => { setEditMode(false); });
-    document.getElementById('saveAllBtn').addEventListener('click', saveToLocal);
-    document.getElementById('resetDefaultBtn').addEventListener('click', resetToEmpty);
+    document.getElementById('lockEditBtn').addEventListener('click', () => setEditMode(false));
+    document.getElementById('saveDataBtn').addEventListener('click', saveAllToLocal);
+    document.getElementById('resetDataBtn').addEventListener('click', () => { if(confirm('Очистить абсолютно все данные?')) resetAllData(); });
     
-    // Добавление строк через кнопки в шапке
-    document.getElementById('addRowTable1').addEventListener('click', () => addRowToTable('table1'));
-    document.getElementById('addRowTable2').addEventListener('click', () => addRowToTable('table2'));
-    document.getElementById('addMatchBracket1').addEventListener('click', () => addMatchToBracket('bracket1', 0));
-    document.getElementById('addMatchBracket2').addEventListener('click', () => addMatchToBracket('bracket2', 0));
-
-    // Инициализация: загружаем сохранённое или пустое состояние
-    loadFromLocal();   // если ничего нет — остаётся пустым
+    loadFromLocal();
+    if (table1Data.rows.length === 0) applySizes();  // первичная генерация
     setEditMode(false);
-    // дополнительно, чтобы гарантировать пустоту изначально: если в localStorage нет записей, то state чист, но rows пусты.
-    // если же пользователь хочет сбросить кнопкой - есть reset.
 </script>
 </body>
 </html>
-```
