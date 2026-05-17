@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали рейтинга - Volanchiki</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #bfbfdb; min-height: 100vh; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 1rem 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; flex-wrap: wrap; }
+        .logo-link img { max-width: 100%; height: auto; width: 300px; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; flex-wrap: wrap; }
+        .nav-menu a { text-decoration: none; color: #0b0829; font-weight: 500; font-size: 18px; }
+        .nav-menu a:hover { color: #667eea; }
+        .dropdown { position: relative; }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; background: white; min-width: 200px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 9999; padding: 0.5rem 0; }
+        .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-menu a { padding: 0.6rem 1.5rem; display: block; color: #333; font-size: 16px; }
+        .dropdown-menu a:hover { background: #bfbfdb; padding-left: 2rem; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 20px; }
+        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .profile-header { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; }
+        .avatar { width: 80px; height: 80px; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; color: white; }
+        h2 { font-size: 24px; }
+        .graph-container { background: #f8f9fa; border-radius: 10px; padding: 20px; height: 280px; position: relative; overflow: hidden; }
+        .bar { position: absolute; bottom: 50px; border-radius: 4px 4px 0 0; transition: height 0.5s; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background: #f8f9fa; }
+        .positive { color: #2e7d32; font-weight: bold; }
+        .negative { color: #c62828; font-weight: bold; }
+        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #eee; text-align: center; }
+        footer a { text-decoration: none; color: #333; font-weight: bold; margin: 0 15px; }
+        @media (max-width: 768px) { .nav-container { flex-direction: column; gap: 15px; } }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="Glavnay.html" class="logo-link"><img src="logo.jpg" alt="Логотип" width="400" height="150"></a>
+        <ul class="nav-menu">
+            <li><a href="Glavnay.html">Главная</a></li>
+            <li><a href="Kalendar.html">Календарь</a></li>
+            <li class="dropdown"><a href="#">Игроки ▾</a><div class="dropdown-menu"><a href="ОдинИгрок.html">😎 Одиночный</a><a href="ПарИгрок.html">👭 Парный</a></div></li>
+            <li class="dropdown"><a href="#">Информация ▾</a><div class="dropdown-menu"><a href="Ychastnikam.html">🏸 Участникам</a><a href="Organizatoram.html">📋 Организаторам</a></div></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="profile-header">
+            <div class="avatar">👤</div>
+            <div><h2 id="playerName">Загрузка...</h2><p style="color:#666;" id="playerNick"></p><p>Текущий рейтинг: <strong id="currentRating" style="color:#667eea;font-size:24px;">—</strong></p></div>
+        </div>
+    </div>
+    <div class="card"><h3>📈 График рейтинга</h3><div class="graph-container" id="graph"></div></div>
+    <div class="card"><h3>📋 История изменений</h3><table><thead><tr><th>Дата</th><th>Турнир</th><th>Было</th><th>Стало</th><th>Изм.</th></tr></thead><tbody id="historyBody"><tr><td colspan="5" style="text-align:center;">Загрузка...</td></tr></tbody></table></div>
+</div>
+
+<footer><a href="#" onclick="history.back()">← Назад</a><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Наверх</a></footer>
+
+<script>
+const API='http://localhost:8080/api';const p=new URLSearchParams(location.search);const uid=p.get('id');
+async function L(){try{const r=await fetch(API+'/ratings/'+uid+'/history');if(r.ok){H(await r.json());return}}catch(e){}H([{formattedDate:'05.04.2026',tournamentTitle:'Volan Open',oldRating:1400,newRating:1450,changeValue:50},{formattedDate:'10.02.2026',tournamentTitle:'Зимний кубок',oldRating:1425,newRating:1350,changeValue:-75},{formattedDate:'01.01.2026',tournamentTitle:'Новогодний',oldRating:1400,newRating:1425,changeValue:25}]);}
+function H(h){if(!h.length){document.getElementById('historyBody').innerHTML='<tr><td colspan="5" style="text-align:center;">Нет данных</td></tr>';return}
+document.getElementById('currentRating').textContent=h[0].newRating;document.getElementById('playerName').textContent='Игрок #'+uid;document.getElementById('historyBody').innerHTML=h.map(i=>'<tr><td>'+i.formattedDate+'</td><td>'+(i.tournamentTitle||'—')+'</td><td>'+i.oldRating+'</td><td>'+i.newRating+'</td><td class="'+(i.changeValue>=0?'positive':'negative')+'">'+(i.changeValue>0?'+'+i.changeValue:i.changeValue)+'</td></tr>').join('');const g=document.getElementById('graph');const mx=Math.max(...h.map(i=>i.newRating));const mn=Math.min(...h.map(i=>i.oldRating));const r=mx-mn||100;const w=50;const gap=30;const rev=[...h].reverse();rev.forEach((i,x)=>{const ht=((i.newRating-mn)/r)*180+40;const b=document.createElement('div');b.className='bar';b.style.cssText='left:'+(x*(w+gap)+40)+'px;height:'+ht+'px;width:'+w+'px;background:linear-gradient(to top,#667eea,#764ba2);';b.title=i.newRating;g.appendChild(b);const l=document.createElement('div');l.style.cssText='position:absolute;bottom:10px;left:'+(x*(w+gap)+40)+'px;width:'+w+'px;text-align:center;font-size:11px;';l.textContent=i.formattedDate?i.formattedDate.substring(3):'';g.appendChild(l);});}
+L();
+</script>
+</body>
+</html>
