@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;A
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #bfbfdb;
+            min-height: 100vh;
+        }
+
+        /* НАВБАР - АДАПТИВНЫЙ */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo-link img {
+            max-width: 100%;
+            height: auto;
+            width: 300px;
+        }
+
+        /* Меню */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #0b0829;
+            font-weight: 500;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #667eea;
+        }
+
+        /* Выпадающее меню */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            padding: 0.6rem 1.5rem;
+            display: block;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .dropdown-menu a:hover {
+            background: #bfbfdb;
+            padding-left: 2rem;
+        }
+
+        .menu-icon {
+            margin-right: 8px;
+        }
+
+        /* Личный кабинет */
+        .lk-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lk-button {
+            font-size: 18px;
+            display: inline-block;
+            background: #0b0829;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: white;
+            cursor: default;
+            transition: all 0.3s;
+        }
+
+        .lk-dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 180px;
+            border-radius: 5px;
+            padding: 8px 0;
+            z-index: 1000;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .lk-wrapper:hover .lk-dropdown {
+            display: block;
+        }
+
+        .lk-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.3s;
+        }
+
+        .lk-dropdown a:hover {
+            background: #f5f5f5;
+            padding-left: 20px;
+        }
+
+        /* Основной контент */
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Hero секция */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 60px 40px;
+            color: white;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .hero .btn {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        .hero .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Карточки */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Аккордеон */
+        .accordion-header {
+            cursor: pointer;
+            background-color: #f1f1f1;
+            padding: 15px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .accordion-header:hover {
+            background-color: #e0e0e0;
+        }
+
+        .accordion-content {
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+            display: inline-block;
+            float: right;
+            color: #ff8400;
+        }
+
+        /* Футер */
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .nav-menu {
+                justify-content: center;
+                gap: 1rem;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .hero {
+                padding: 40px 20px;
+            }
+            .lk-button {
+                padding: 8px 16px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- НАВБАР -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="Glavnay.html" class="logo-link">
+            <img src="logo.jpg" alt="Логотип" width="400" height="150">
+        </a>
+        <ul class="nav-menu">
+            <li><a href="Glavnay.html">Главная</a></li>
+            <li><a href="Kalendar.html">Календарь</a></li>
+            <li class="dropdown">
+                <a href="#">Игроки ▾</a>
+                <div class="dropdown-menu">
+                    <a href="ОдинИгрок.html"><span class="menu-icon">😎</span> Одиночный</a>
+                    <a href="ПарИгрок.html"><span class="menu-icon">👭</span> Парный</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Информация ▾</a>
+                <div class="dropdown-menu">
+                    <a href="Ychastnikam.html"><span class="menu-icon">🏸</span> Участникам</a>
+                    <a href="Organizatoram.html"><span class="menu-icon">📋</span> Организаторам</a>
+                </div>
+            </li>
+        </ul>
+        <div class="lk-wrapper">
+            <span class="lk-button">Личный кабинет ▾</span>
+            <div class="lk-dropdown">
+                <a href="vxod.html"><span>🔑</span> Вход</a>
+                <a href="reg.html"><span>📝</span> Регистрация</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ОСНОВНОЙ КОНТЕНТ -->
+<div class="main-content">
+    <!-- Hero блок -->
+    <div class="hero">
+        <h1>Добро пожаловать в мир бадминтона!</h1>
+        <p>Крупнейшая платформа для любительских турниров по бадминтону в России</p>
+        <a href="Kalendar.html" class="btn">Смотреть турниры →</a>
+    </div>
+
+    <!-- Карточки преимуществ -->
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon">🏸</div>
+            <h3>Участвуй в турнирах</h3>
+            <p>Регистрируйся на любительские соревнования любого уровня и повышай свой рейтинг.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Следи за рейтингом</h3>
+            <p>Прозрачная система рейтинга ЛАБ позволяет отслеживать прогресс и сравнивать себя с другими.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">👥</div>
+            <h3>Находи партнёров</h3>
+            <p>Ищи напарников для парных разрядов (MD, WD, XD) прямо на сайте.</p>
+        </div>
+    </div>
+
+    <!-- Информационный блок -->
+    <div class="blog-post">
+        <div class="blog-post-body">
+            <h2>Всем привет!</h2>
+            <p>Это наш новый крутейший сайт для любительских турниров по бадминтону!</p>
+            <p><a href="Kalendar.html">Здесь</a> публикуются все главные старты сезона 2026.</p>
+            <p>Чтобы стать частью нашей большой спортивной семьи, скорее переходи в Личный кабинет.</p>
+            <p>Регистрируйся и подавай заявку на свой первый турнир!</p>
+            <p><strong>Основные правила, которые нужно знать:</strong> правила бадминтона, правила рейтинга, правила организатора.</p>
+
+            <!-- Аккордеон -->
+            <h3>Правила для организаторов соревнований и спортивных мероприятий</h3>
+            <h5 class="accordion-header" onclick="toggleAccordion('info', this)">
+                Публикация турнира по бадминтону
+                <span class="arrow">▼</span>
+            </h5>
+            <div id="info" class="accordion-content">
+                <p>Для публикации турнира необходимо зарегистрироваться как организатор, после чего в личном кабинете появится возможность добавить турнир. Все поля должны быть заполнены корректно.</p>
+            </div>
+
+            <h5 class="accordion-header" onclick="toggleAccordion('rules', this)">
+                Публикация спортивных мероприятий и сборов
+                <span class="arrow">▼</span>
+            </h5>
+            <div id="rules" class="accordion-content">
+                <p>Сборы и мероприятия публикуются в специальном разделе. Требуется указать программу, стоимость и контакты организатора.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ФУТЕР -->
+<footer>
+    <a href="#">Контакты</a>
+    <a href="#" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">↑ Наверх</a>
+</footer>
+
+<script>
+    function toggleAccordion(id, header) {
+        const content = document.getElementById(id);
+        const arrow = header.querySelector('.arrow');
+        if (content.style.display === "none" || content.style.display === "") {
+            content.style.display = "block";
+            if (arrow) arrow.style.transform = "rotate(180deg)";
+        } else {
+            content.style.display = "none";
+            if (arrow) arrow.style.transform = "rotate(0deg)";
+        }
+    }
+</script>
+
+</body>
+</html>
