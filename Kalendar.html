@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь - Volanchiki</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #bfbfdb;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo-link img {
+            max-width: 100%;
+            height: auto;
+            width: 300px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #0b0829;
+            font-weight: 500;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #667eea;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            padding: 0.6rem 1.5rem;
+            display: block;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .dropdown-menu a:hover {
+            background: #bfbfdb;
+            padding-left: 2rem;
+        }
+
+        .menu-icon {
+            margin-right: 8px;
+        }
+
+        .lk-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lk-button {
+            font-size: 18px;
+            display: inline-block;
+            background: #0b0829;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: white;
+            cursor: default;
+            transition: all 0.3s;
+        }
+
+        .lk-dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 180px;
+            border-radius: 5px;
+            padding: 8px 0;
+            z-index: 1000;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .lk-wrapper:hover .lk-dropdown {
+            display: block;
+        }
+
+        .lk-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.3s;
+        }
+
+        .lk-dropdown a:hover {
+            background: #f5f5f5;
+            padding-left: 20px;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .check-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .check-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+
+        .reset-btn {
+            padding: 10px 25px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+            transform: scale(1.02);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 16px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f0f0f0 !important;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: white;
+        }
+
+        .result-count {
+            margin-top: 20px;
+            text-align: right;
+            color: #666;
+            font-size: 14px;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .nav-menu {
+                justify-content: center;
+            }
+            .filters {
+                flex-direction: column;
+            }
+            .filter-group {
+                width: 100%;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="Glavnay.html" class="logo-link">
+            <img src="logo.jpg" alt="Логотип" width="400" height="150">
+        </a>
+        <ul class="nav-menu">
+            <li><a href="Glavnay.html">Главная</a></li>
+            <li><a href="Kalendar.html">Календарь</a></li>
+            <li class="dropdown">
+                <a href="#">Игроки ▾</a>
+                <div class="dropdown-menu">
+                    <a href="ОдинИгрок.html"><span class="menu-icon">😎</span> Одиночный</a>
+                    <a href="ПарИгрок.html"><span class="menu-icon">👭</span> Парный</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Информация ▾</a>
+                <div class="dropdown-menu">
+                    <a href="Ychastnikam.html"><span class="menu-icon">🏸</span> Участникам</a>
+                    <a href="Organizatoram.html"><span class="menu-icon">📋</span> Организаторам</a>
+                </div>
+            </li>
+        </ul>
+        <div class="lk-wrapper">
+            <span class="lk-button">Личный кабинет ▾</span>
+            <div class="lk-dropdown">
+                <a href="vxod.html"><span>🔑</span> Вход</a>
+                <a href="reg.html"><span>📝</span> Регистрация</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="content">
+    <h2>Турниры по бадминтону 2026</h2>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label>🔍 Поиск турнира</label>
+            <input type="text" id="searchInput" placeholder="Введите название...">
+        </div>
+
+        <div class="filter-group">
+            <label>📍 Город</label>
+            <select id="cityFilter">
+                <option value="all">Все города</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>🏷️ Разряды</label>
+            <div class="check-group" id="ranksFilter">
+                <label><input type="checkbox" value="MS" checked> MS</label>
+                <label><input type="checkbox" value="WS" checked> WS</label>
+                <label><input type="checkbox" value="MD" checked> MD</label>
+                <label><input type="checkbox" value="WD" checked> WD</label>
+                <label><input type="checkbox" value="XD" checked> XD</label>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>👥 Группы</label>
+            <div class="check-group" id="groupsFilter">
+                <label><input type="checkbox" value="A" checked> A</label>
+                <label><input type="checkbox" value="B" checked> B</label>
+                <label><input type="checkbox" value="C" checked> C</label>
+                <label><input type="checkbox" value="D" checked> D</label>
+                <label><input type="checkbox" value="E" checked> E</label>
+                <label><input type="checkbox" value="F" checked> F</label>
+                <label><input type="checkbox" value="G" checked> G</label>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>📌 Статус</label>
+            <select id="statusFilter">
+                <option value="all">Все статусы</option>
+                <option value="REGISTRATION_OPEN">Активен</option>
+                <option value="DRAFT">Скоро</option>
+                <option value="COMPLETED">Завершен</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <button class="reset-btn" onclick="resetFilters()">Сбросить</button>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="tournamentsTable">
+            <thead>
+                <tr>
+                    <th>Турнир</th>
+                    <th>Город</th>
+                    <th>Дата начала</th>
+                    <th>Дата окончания</th>
+                    <th>Разряды</th>
+                    <th>Группы</th>
+                    <th>Возраст</th>
+                    <th>Организатор</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" style="text-align:center;padding:30px;">Загрузка турниров...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="result-count" id="resultCount">Показано записей: 0</div>
+</div>
+
+<footer>
+    <a href="#">Контакты</a>
+    <a href="#" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">↑ Наверх</a>
+</footer>
+
+<script>
+    const API = 'http://localhost:8080/api';
+    const tableBody = document.getElementById('tableBody');
+    const resultCount = document.getElementById('resultCount');
+    const cityFilter = document.getElementById('cityFilter');
+
+    let allTournaments = [];
+
+    // Маппинг статусов с бэкенда на русский
+    function getStatusLabel(status) {
+        const map = {
+            'DRAFT': 'Скоро',
+            'REGISTRATION_OPEN': 'Активен',
+            'REGISTRATION_CLOSED': 'Закрыта',
+            'IN_PROGRESS': 'Идёт',
+            'COMPLETED': 'Завершен',
+            'CANCELLED': 'Отменен'
+        };
+        return map[status] || status;
+    }
+
+    function getStatusClass(status) {
+        if (status === 'REGISTRATION_OPEN' || status === 'IN_PROGRESS') return 'background:#087167;';
+        if (status === 'DRAFT') return 'background:#ef6c00;';
+        if (status === 'COMPLETED') return 'background:#780000;';
+        return 'background:#999;';
+    }
+
+    // Загрузка турниров с сервера
+    async function loadTournaments() {
+        try {
+            const res = await fetch(`${API}/tournaments`);
+            if (!res.ok) throw new Error('Ошибка сервера');
+            allTournaments = await res.json();
+
+            // Заполняем фильтр городов из данных
+            const cities = [...new Set(allTournaments.map(t => t.city).filter(Boolean))];
+            cityFilter.innerHTML = '<option value="all">Все города</option>' +
+                cities.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            renderTable(allTournaments);
+        } catch (e) {
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;color:#999;">Ошибка загрузки. Запустите сервер: ./mvnw spring-boot:run</td></tr>';
+            resultCount.textContent = 'Показано записей: 0';
+        }
+    }
+
+    function renderTable(tournaments) {
+        if (!tournaments.length) {
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;color:#999;">Нет турниров</td></tr>';
+            resultCount.textContent = 'Показано записей: 0';
+            return;
+        }
+
+        tableBody.innerHTML = tournaments.map((t, i) => `
+            <tr style="${i % 2 === 0 ? 'background:#f9f9f9;' : ''}border-bottom:1px solid #eee;">
+                <td style="padding:12px 15px;"><a href="tournament.html?id=${t.id}" style="color:#0b0829;font-weight:bold;">${t.title}</a></td>
+                <td style="padding:12px 15px;">${t.city || '—'}</td>
+                <td style="padding:12px 15px;">${t.startDate || '—'}</td>
+                <td style="padding:12px 15px;">${t.endDate || '—'}</td>
+                <td style="padding:12px 15px;">${t.categories ? t.categories.join(', ') : '—'}</td>
+                <td style="padding:12px 15px;">${t.groups ? t.groups.join(', ') : '—'}</td>
+                <td style="padding:12px 15px;">${formatAge(t.minAge, t.maxAge)}</td>
+                <td style="padding:12px 15px;">${t.organizerName || '—'}</td>
+                <td style="padding:12px 15px;">
+                    <span class="status-badge" style="${getStatusClass(t.status)}">${getStatusLabel(t.status)}</span>
+                </td>
+            </tr>
+        `).join('');
+
+        resultCount.textContent = `Показано записей: ${tournaments.length}`;
+    }
+
+    function formatAge(min, max) {
+        if (!min && !max) return 'Любой';
+        if (min && max) return `${min}-${max}`;
+        if (min) return `от ${min}`;
+        return `до ${max}`;
+    }
+
+    function getSelectedValues(containerId) {
+        return Array.from(document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`))
+            .map(cb => cb.value);
+    }
+
+    function filterTable() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const city = cityFilter.value;
+        const status = document.getElementById('statusFilter').value;
+        const selectedRanks = getSelectedValues('ranksFilter');
+        const selectedGroups = getSelectedValues('groupsFilter');
+
+        const filtered = allTournaments.filter(t => {
+            if (searchTerm && !t.title.toLowerCase().includes(searchTerm)) return false;
+            if (city !== 'all' && t.city !== city) return false;
+            if (status !== 'all' && t.status !== status) return false;
+            if (t.categories && selectedRanks.length < 5) {
+                if (!selectedRanks.some(r => t.categories.includes(r))) return false;
+            }
+            if (t.groups && selectedGroups.length < 7) {
+                if (!selectedGroups.some(g => t.groups.includes(g))) return false;
+            }
+            return true;
+        });
+
+        renderTable(filtered);
+    }
+
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        cityFilter.value = 'all';
+        document.getElementById('statusFilter').value = 'all';
+        document.querySelectorAll('#ranksFilter input').forEach(cb => cb.checked = true);
+        document.querySelectorAll('#groupsFilter input').forEach(cb => cb.checked = true);
+        renderTable(allTournaments);
+    }
+
+    // Подписки на фильтры
+    document.getElementById('searchInput').addEventListener('input', filterTable);
+    cityFilter.addEventListener('change', filterTable);
+    document.getElementById('statusFilter').addEventListener('change', filterTable);
+    document.querySelectorAll('#ranksFilter input, #groupsFilter input').forEach(cb =>
+        cb.addEventListener('change', filterTable)
+    );
+
+    // Первый запуск
+    loadTournaments();
+</script>
+
+</body>
+</html>
