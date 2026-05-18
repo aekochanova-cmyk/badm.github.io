@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Турнир - Volanchiki</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #bfbfdb;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #0b0829;
+            font-size: 20px;
+        }
+
+        .tournament-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Hero секция */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .tournament-title {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .tournament-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Табы */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        /* Контент */
+        .section-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .categories-list {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .category-badge {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Сетка */
+        .bracket {
+            overflow-x: auto;
+        }
+
+        .round {
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 30px;
+        }
+
+        .match {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            min-width: 200px;
+        }
+
+        .match-player {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .match-score {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+            }
+            .hero-section {
+                padding: 25px;
+            }
+            .tournament-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="Glavnay.html"><img src="logo.jpg" width="400" height="150" alt="Логотип"></a>
+            <ul class="nav-menu">
+                <li><a href="Glavnay.html">Главная</a></li>
+                <li><a href="Kalendar.html">Календарь</a></li>
+                <li><a href="profile.html">Мой профиль</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="tournament-container">
+        <div class="hero-section">
+            <h1 class="tournament-title" id="tournamentName">Volan Open 2026</h1>
+            <div class="tournament-info">
+                <div class="info-item">📅 <span id="tournamentDates">05.04.2026 - 10.04.2026</span></div>
+                <div class="info-item">📍 <span id="tournamentCity">Москва</span></div>
+                <div class="info-item">👥 <span id="tournamentParticipants">24</span> участников</div>
+                <div class="info-item">🏸 <span id="tournamentStatus">Активен</span></div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('info')">О турнире</button>
+            <button class="tab" onclick="showTab('players')">Участники</button>
+            <button class="tab" onclick="showTab('bracket')">Сетка</button>
+            <button class="tab" onclick="showTab('results')">Результаты</button>
+        </div>
+
+        <!-- Вкладка: О турнире -->
+        <div id="tab-info" class="section-card">
+            <h3>📋 О турнире</h3>
+            <p id="tournamentDescription">Ежегодный открытый турнир по бадминтону. Приглашаются все желающие!</p>
+            
+            <h3 style="margin-top: 20px;">🏷️ Категории</h3>
+            <div class="categories-list" id="categoriesList">
+                <span class="category-badge">MS</span>
+                <span class="category-badge">WS</span>
+                <span class="category-badge">MD</span>
+                <span class="category-badge">WD</span>
+                <span class="category-badge">XD</span>
+            </div>
+
+            <h3 style="margin-top: 20px;">👥 Группы</h3>
+            <div class="categories-list" id="groupsList">
+                <span class="category-badge">A</span>
+                <span class="category-badge">B</span>
+                <span class="category-badge">C</span>
+                <span class="category-badge">D</span>
+            </div>
+
+            <button class="register-btn" onclick="registerForTournament()">✍️ Подать заявку на турнир</button>
+        </div>
+
+        <!-- Вкладка: Участники -->
+        <div id="tab-players" class="section-card" style="display: none;">
+            <h3>📋 Список участников</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead><tr><th>Игрок</th><th>Разряд</th><th>Группа</th><th>Рейтинг</th></tr></thead>
+                <tbody id="playersList"></tbody>
+            </table>
+        </div>
+
+        <!-- Вкладка: Сетка -->
+        <div id="tab-bracket" class="section-card" style="display: none;">
+            <h3>🏆 Турнирная сетка</h3>
+            <div class="bracket" id="bracket"></div>
+        </div>
+
+        <!-- Вкладка: Результаты -->
+        <div id="tab-results" class="section-card" style="display: none;">
+            <h3>📊 Результаты матчей</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead><tr><th>Дата</th><th>Категория</th><th>Матч</th><th>Счёт</th></tr></thead>
+                <tbody id="resultsList"></tbody>
+            </table>
+        </div>
+    </div>
+
+<footer>
+    <a href="Contacts.html">Контакты</a>
+    <a href="#" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">↑ Наверх</a>
+</footer>
+
+    <script>
+        // Получаем ID турнира из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tournamentId = parseInt(urlParams.get('id'));
+
+        let tournament = null;
+        let participants = [];
+
+        function loadTournament() {
+            // Загружаем из localStorage
+            const savedTournaments = localStorage.getItem('organizer_tournaments');
+            if (savedTournaments) {
+                const tournaments = JSON.parse(savedTournaments);
+                tournament = tournaments.find(t => t.id === tournamentId);
+            }
+            
+            if (!tournament) {
+                // Демо-данные
+                tournament = {
+                    id: 1,
+                    name: 'Volan Open 2026',
+                    startDate: '2026-04-05',
+                    endDate: '2026-04-10',
+                    city: 'Москва',
+                    status: 'active',
+                    participants: 24,
+                    description: 'Ежегодный открытый турнир по бадминтону. Приглашаются все желающие!',
+                    categories: ['MS', 'WS', 'MD', 'WD', 'XD'],
+                    groups: ['A', 'B', 'C', 'D']
+                };
+            }
+
+            document.getElementById('tournamentName').textContent = tournament.name;
+            document.getElementById('tournamentDates').textContent = `${tournament.startDate} — ${tournament.endDate}`;
+            document.getElementById('tournamentCity').textContent = tournament.city;
+            document.getElementById('tournamentParticipants').textContent = tournament.participants || 0;
+            document.getElementById('tournamentStatus').textContent = tournament.status === 'active' ? 'Активен' : 'Скоро';
+            document.getElementById('tournamentDescription').textContent = tournament.description || 'Описание отсутствует';
+
+            const categoriesList = document.getElementById('categoriesList');
+            categoriesList.innerHTML = (tournament.categories || ['MS', 'WS', 'MD', 'WD', 'XD']).map(c => `<span class="category-badge">${c}</span>`).join('');
+
+            const groupsList = document.getElementById('groupsList');
+            groupsList.innerHTML = (tournament.groups || ['A', 'B', 'C', 'D', 'E', 'F', 'G']).map(g => `<span class="category-badge">${g}</span>`).join('');
+        }
+
+        function loadParticipants() {
+            participants = [
+                { name: 'Иван Иванов', category: 'MS', group: 'A', rating: 1250 },
+                { name: 'Петр Петров', category: 'MS', group: 'A', rating: 1180 },
+                { name: 'Анна Сидорова', category: 'WS', group: 'B', rating: 1300 },
+                { name: 'Мария Смирнова', category: 'WS', group: 'B', rating: 1220 }
+            ];
+
+            const tbody = document.getElementById('playersList');
+            tbody.innerHTML = participants.map(p => `
+                <tr><td>${p.name}</td><td>${p.category}</td><td>${p.group}</td><td>${p.rating}</td></tr>
+            `).join('');
+        }
+
+        function loadBracket() {
+            const bracketDiv = document.getElementById('bracket');
+            bracketDiv.innerHTML = `
+                <div class="round">
+                    <h4>1/4 финала</h4>
+                    <div class="match"><div class="match-player">Иванов И.</div><div class="match-player">Петров П.</div></div>
+                    <div class="match"><div class="match-player">Сидоров А.</div><div class="match-player">Козлов Д.</div></div>
+                </div>
+                <div class="round">
+                    <h4>1/2 финала</h4>
+                    <div class="match"><div class="match-player">Победитель 1</div><div class="match-player">Победитель 2</div></div>
+                </div>
+                <div class="round">
+                    <h4>Финал</h4>
+                    <div class="match"><div class="match-player">Победитель полуфинала</div></div>
+                </div>
+            `;
+        }
+
+        function loadResults() {
+            const tbody = document.getElementById('resultsList');
+            tbody.innerHTML = `
+                <tr><td>05.04.2026</td><td>MS</td><td>Иванов И. vs Петров П.</td><td>21-15, 21-18</td></tr>
+                <tr><td>06.04.2026</td><td>WS</td><td>Сидорова А. vs Смирнова М.</td><td>21-10, 21-12</td></tr>
+            `;
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('tab-info').style.display = 'none';
+            document.getElementById('tab-players').style.display = 'none';
+            document.getElementById('tab-bracket').style.display = 'none';
+            document.getElementById('tab-results').style.display = 'none';
+            
+            document.getElementById(`tab-${tabName}`).style.display = 'block';
+        }
+
+        function registerForTournament() {
+            const user = localStorage.getItem('volanchiki_user');
+            if (!user) {
+                if (confirm('Для подачи заявки необходимо войти. Перейти на страницу входа?')) {
+                    window.location.href = 'vxod.html';
+                }
+                return;
+            }
+            alert('✅ Заявка на турнир успешно отправлена! Организатор свяжется с вами.');
+        }
+
+        loadTournament();
+        loadParticipants();
+        loadBracket();
+        loadResults();
+    </script>
+</body>
+</html>

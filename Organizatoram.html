@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Организаторам - Volanchiki</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #bfbfdb;
+            min-height: 100vh;
+        }
+
+        /* НАВБАР - АДАПТИВНЫЙ */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo-link img {
+            max-width: 100%;
+            height: auto;
+            width: 300px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #0b0829;
+            font-weight: 500;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #667eea;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            padding: 0.6rem 1.5rem;
+            display: block;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .dropdown-menu a:hover {
+            background: #bfbfdb;
+            padding-left: 2rem;
+        }
+
+        .menu-icon {
+            margin-right: 8px;
+        }
+
+        .lk-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lk-button {
+            font-size: 18px;
+            display: inline-block;
+            background: #0b0829;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: white;
+            cursor: default;
+            transition: all 0.3s;
+        }
+
+        .lk-dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 180px;
+            border-radius: 5px;
+            padding: 8px 0;
+            z-index: 1000;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .lk-wrapper:hover .lk-dropdown {
+            display: block;
+        }
+
+        .lk-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.3s;
+        }
+
+        .lk-dropdown a:hover {
+            background: #f5f5f5;
+            padding-left: 20px;
+        }
+
+        /* Основной контент */
+        .content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Hero секция */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 50px 40px;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Карточки шагов */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .step-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .step-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .step-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .step-card a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Правила */
+        .rules-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .rules-section h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .rules-section h3 {
+            font-size: 22px;
+            margin: 20px 0 10px;
+            color: #444;
+        }
+
+        .rules-section ul {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .rules-section li {
+            margin: 8px 0;
+        }
+
+        .badge-list {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .badge {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Аккордеон */
+        .accordion-header {
+            cursor: pointer;
+            background-color: #f1f1f1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .accordion-header:hover {
+            background-color: #e8e8e8;
+        }
+
+        .accordion-content {
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+            display: inline-block;
+            float: right;
+            color: #ff8400;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .nav-menu {
+                justify-content: center;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- НАВБАР -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="Glavnay.html" class="logo-link">
+            <img src="logo.jpg" alt="Логотип" width="400" height="150">
+        </a>
+        <ul class="nav-menu">
+            <li><a href="Glavnay.html">Главная</a></li>
+            <li><a href="Kalendar.html">Календарь</a></li>
+            <li class="dropdown">
+                <a href="#">Игроки ▾</a>
+                <div class="dropdown-menu">
+                    <a href="ОдинИгрок.html"><span class="menu-icon">😎</span> Одиночный</a>
+                    <a href="ПарИгрок.html"><span class="menu-icon">👭</span> Парный</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Информация ▾</a>
+                <div class="dropdown-menu">
+                    <a href="Ychastnikam.html"><span class="menu-icon">🏸</span> Участникам</a>
+                    <a href="Organizatoram.html"><span class="menu-icon">📋</span> Организаторам</a>
+                </div>
+            </li>
+        </ul>
+        <div class="lk-wrapper">
+            <span class="lk-button">Личный кабинет ▾</span>
+            <div class="lk-dropdown">
+                <a href="vxod.html"><span>🔑</span> Вход</a>
+                <a href="reg.html"><span>📝</span> Регистрация</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ОСНОВНОЙ КОНТЕНТ -->
+<div class="content">
+    <!-- Hero блок -->
+    <div class="hero">
+        <h1>Организаторам</h1>
+        <p>Публикуйте турниры, управляйте заявками и развивайте бадминтон в своём городе</p>
+    </div>
+
+    <!-- Шаги -->
+    <div class="steps">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Регистрация</h3>
+            <p>Зарегистрируйтесь на сайте <strong>Volanchiki</strong> как обычный пользователь</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Запрос доступа</h3>
+            <p>Напишите на <a href="mailto:volanchiki@gmail.com">volanchiki@gmail.com</a> с запросом доступа организатора. Укажите ФИО и email</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Публикация</h3>
+            <p>В личном кабинете опубликуйте турнир в разделе «Добавить турнир». Все ваши турниры будут отображаться в разделе «Мои турниры»</p>
+        </div>
+    </div>
+
+    <!-- Правила -->
+    <div class="rules-section">
+        <h2>Правила публикации</h2>
+        <ul>
+            <li> Без ЗАГЛАВНЫХ, смайликов, эмодзи и более 1 восклицательного знака в заголовке</li>
+            <li> Обязательные поля: название, короткое название, дата, время, организатор, разряды, группы, возраст, место проведения, положение</li>
+            <li> Рекомендуется указывать контакты, расписание, список участников и результаты</li>
+            <li> Разрешены активные ссылки через кнопку «Скрепка» в редакторе</li>
+            <li> Положение турнира должно содержать все ключевые условия участия</li>
+        </ul>
+
+        <h3>Разряды</h3>
+        <div class="badge-list">
+            <span class="badge">MS</span>
+            <span class="badge">WS</span>
+            <span class="badge">MD</span>
+            <span class="badge">WD</span>
+            <span class="badge">XD</span>
+        </div>
+
+        <h3>Категории (группы)</h3>
+        <div class="badge-list">
+            <span class="badge">A</span>
+            <span class="badge">B</span>
+            <span class="badge">C</span>
+            <span class="badge">D</span>
+            <span class="badge">E</span>
+            <span class="badge">F</span>
+            <span class="badge">G</span>
+        </div>
+    </div>
+
+    <!-- Аккордеон -->
+    <h3 style="font-size: 24px; margin-bottom: 20px; color: #333;">Дополнительная информация</h3>
+    
+    <h5 class="accordion-header" onclick="toggleAccordion('info', this)">
+        Публикация турнира по бадминтону
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="info" class="accordion-content">
+        <p>После получения доступа организатора в личном кабинете появляется кнопка "Добавить турнир". Заполните все обязательные поля, прикрепите положение и опубликуйте. Турнир появится в календаре после модерации (до 24 часов).</p>
+    </div>
+
+    <h5 class="accordion-header" onclick="toggleAccordion('rules', this)">
+        Публикация спортивных мероприятий и сборов
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="rules" class="accordion-content">
+        <p>Для публикации сборов и спортивных мероприятий (не турниров) используйте соответствующий раздел. Укажите программу, стоимость участия, контакты организатора и условия проживания.</p>
+    </div>
+
+</div>
+
+<!-- ФУТЕР -->
+<footer>
+    <a href="Contacts.html">Контакты</a>
+    <a href="#" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">↑ Наверх</a>
+</footer>
+<script>
+    function toggleAccordion(id, header) {
+        const content = document.getElementById(id);
+        const arrow = header.querySelector('.arrow');
+        if (content.style.display === "none" || content.style.display === "") {
+            content.style.display = "block";
+            if (arrow) arrow.style.transform = "rotate(180deg)";
+        } else {
+            content.style.display = "none";
+            if (arrow) arrow.style.transform = "rotate(0deg)";
+        }
+    }
+</script>
+
+</body>
+</html>

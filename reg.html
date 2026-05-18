@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Volanchiki</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #bfbfdb; min-height: 100vh; }
+        .navbar { background: rgba(255,255,255,0.95); box-shadow: 0 2px 20px rgba(0,0,0,0.1); padding: 1rem 0; position: sticky; top: 0; z-index: 1000; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; flex-wrap: wrap; }
+        .logo-link img { max-width: 100%; height: auto; width: 300px; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; flex-wrap: wrap; }
+        .nav-menu a { text-decoration: none; color: #0b0829; font-weight: 500; font-size: 18px; }
+        .nav-menu a:hover { color: #667eea; }
+        .dropdown { position: relative; }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; background: white; min-width: 200px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 9999; padding: 0.5rem 0; }
+        .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-menu a { padding: 0.6rem 1.5rem; display: block; color: #333; font-size: 16px; }
+        .dropdown-menu a:hover { background: #bfbfdb; padding-left: 2rem; }
+        .auth-container { max-width: 550px; margin: 2rem auto; padding: 0 20px; }
+        .auth-card { background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); overflow: hidden; }
+        .auth-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; color: white; }
+        .auth-header h2 { font-size: 28px; margin-bottom: 8px; }
+        .auth-body { padding: 35px; }
+        .form-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .form-group { flex: 1; margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .form-group input, .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .btn-auth { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; }
+        .btn-auth:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .auth-footer { text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
+        .auth-footer a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .message { text-align: center; margin-top: 10px; font-size: 14px; display: none; padding: 10px; border-radius: 8px; }
+        .message.error { background: #ffebee; color: #c62828; }
+        .message.success { background: #e8f5e9; color: #2e7d32; }
+        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #eee; display: flex; justify-content: center; gap: 30px; }
+        footer a { text-decoration: none; color: #333; font-weight: bold; padding: 10px 20px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; }
+        @media (max-width: 600px) { .form-row { flex-direction: column; gap: 0; } .auth-body { padding: 25px; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="Glavnay.html" class="logo-link"><img src="logo.jpg" alt="Логотип" width="400" height="150"></a>
+            <ul class="nav-menu">
+                <li><a href="Glavnay.html">Главная</a></li>
+                <li><a href="Kalendar.html">Календарь</a></li>
+                <li class="dropdown">
+                    <a href="#">Игроки ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="ОдинИгрок.html">😎 Одиночный</a>
+                        <a href="ПарИгрок.html">👭 Парный</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Информация ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="Ychastnikam.html">🏸 Участникам</a>
+                        <a href="Organizatoram.html">📋 Организаторам</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>📝 Регистрация</h2>
+                <p>Присоединяйтесь к сообществу!</p>
+            </div>
+            <div class="auth-body">
+                <form id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Фамилия *</label>
+                            <input type="text" id="regSurname" placeholder="Иванов" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Имя *</label>
+                            <input type="text" id="regName" placeholder="Иван" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="regEmail" placeholder="ivan@example.com" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Никнейм *</label>
+                            <input type="text" id="regNick" placeholder="ShuttleKing" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Дата рождения *</label>
+                            <input type="date" id="regBirthDate" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Пол *</label>
+                            <select id="regGender" required>
+                                <option value="">Выберите</option>
+                                <option value="MALE">Мужской</option>
+                                <option value="FEMALE">Женский</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон</label>
+                            <input type="tel" id="regPhone" placeholder="+7 900 123-45-67">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Город</label>
+                        <input type="text" id="regCity" placeholder="Москва">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Пароль *</label>
+                            <input type="password" id="regPassword" placeholder="Минимум 6 символов" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>Подтверждение *</label>
+                            <input type="password" id="regConfirm" placeholder="Повторите пароль" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-auth">Зарегистрироваться</button>
+                </form>
+                <div class="message" id="msg"></div>
+                <div class="auth-footer">
+                    Уже есть аккаунт? <a href="vxod.html">Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+    <a href="Contacts.html">Контакты</a>
+    <a href="#" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">↑ Наверх</a>
+</footer>
+
+    <script>
+        const API = 'http://localhost:8080/api';
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+            const msg = document.getElementById('msg');
+            msg.style.display = 'none';
+            msg.className = 'message';
+
+            if (password !== confirm) {
+                msg.textContent = '❌ Пароли не совпадают!';
+                msg.className = 'message error';
+                msg.style.display = 'block';
+                return;
+            }
+
+            const data = {
+                fullName: document.getElementById('regSurname').value + ' ' + document.getElementById('regName').value,
+                nickname: document.getElementById('regNick').value,
+                email: document.getElementById('regEmail').value,
+                password: password,
+                birthDate: document.getElementById('regBirthDate').value,
+                gender: document.getElementById('regGender').value,
+                phone: document.getElementById('regPhone').value,
+                city: document.getElementById('regCity').value
+            };
+
+            try {
+                const res = await fetch(`${API}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    localStorage.setItem('auth_token', result.token);
+                    localStorage.setItem('volanchiki_user', JSON.stringify({
+                        id: result.userId,
+                        fullName: result.fullName,
+                        nickname: result.nickname,
+                        role: result.role
+                    }));
+                    localStorage.setItem('isLoggedIn', 'true');
+                    msg.textContent = '✅ Регистрация успешна! Переадресация...';
+                    msg.className = 'message success';
+                    msg.style.display = 'block';
+                    setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
+                } else {
+                    const text = await res.text();
+                    msg.textContent = '❌ ' + (text || 'Ошибка регистрации');
+                    msg.className = 'message error';
+                    msg.style.display = 'block';
+                }
+            } catch (e) {
+                // Fallback localStorage
+                const userData = {
+                    surname: document.getElementById('regSurname').value,
+                    name: document.getElementById('regName').value,
+                    email: data.email,
+                    password: password,
+                    nick: data.nickname,
+                    level: 'beginner'
+                };
+                localStorage.setItem('volanchiki_user', JSON.stringify(userData));
+                localStorage.setItem('isLoggedIn', 'true');
+                msg.textContent = '✅ Регистрация выполнена локально (сервер недоступен)';
+                msg.className = 'message success';
+                msg.style.display = 'block';
+                setTimeout(() => { window.location.href = 'vxod.html'; }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>

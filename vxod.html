@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Volanchiki</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #bfbfdb; min-height: 100vh; }
+        .navbar { background: rgba(255,255,255,0.95); box-shadow: 0 2px 20px rgba(0,0,0,0.1); padding: 1rem 0; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; flex-wrap: wrap; }
+        .logo-link img { max-width: 100%; height: auto; width: 300px; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; flex-wrap: wrap; }
+        .nav-menu a { text-decoration: none; color: #0b0829; font-weight: 500; font-size: 18px; }
+        .nav-menu a:hover { color: #667eea; }
+        .dropdown { position: relative; }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; background: white; min-width: 200px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 9999; padding: 0.5rem 0; }
+        .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-menu a { padding: 0.6rem 1.5rem; display: block; color: #333; font-size: 16px; }
+        .dropdown-menu a:hover { background: #bfbfdb; padding-left: 2rem; }
+        .auth-container { max-width: 450px; margin: 3rem auto; padding: 0 20px; }
+        .auth-card { background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); overflow: hidden; }
+        .auth-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; color: white; }
+        .auth-header h2 { font-size: 28px; margin-bottom: 8px; }
+        .auth-body { padding: 35px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; transition: all 0.3s ease; }
+        .form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .btn-auth { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-auth:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .auth-footer { text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
+        .auth-footer a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .error-message { color: #c62828; text-align: center; margin-top: 10px; font-size: 14px; display: none; }
+        .success-message { color: #2e7d32; text-align: center; margin-top: 10px; font-size: 14px; display: none; }
+        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #eee; display: flex; justify-content: center; gap: 30px; }
+        footer a { text-decoration: none; color: #333; font-weight: bold; padding: 10px 20px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; }
+        @media (max-width: 768px) { .nav-container { flex-direction: column; gap: 15px; } .nav-menu { justify-content: center; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="Glavnay.html" class="logo-link"><img src="logo.jpg" alt="Логотип" width="400" height="150"></a>
+            <ul class="nav-menu">
+                <li><a href="Glavnay.html">Главная</a></li>
+                <li><a href="Kalendar.html">Календарь</a></li>
+                <li class="dropdown">
+                    <a href="#">Игроки ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="ОдинИгрок.html">😎 Одиночный</a>
+                        <a href="ПарИгрок.html">👭 Парный</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Информация ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="Ychastnikam.html">🏸 Участникам</a>
+                        <a href="Organizatoram.html">📋 Организаторам</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>🔑 Вход</h2>
+                <p>Добро пожаловать!</p>
+            </div>
+            <div class="auth-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="example@mail.ru" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="loginPassword" placeholder="Введите пароль" required>
+                    </div>
+                    <button type="submit" class="btn-auth">Войти</button>
+                </form>
+                <div class="error-message" id="errorMsg"></div>
+                <div class="success-message" id="successMsg"></div>
+                <div class="auth-footer">
+                    <a href="reg.html">Нет аккаунта? Зарегистрироваться</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+    <a href="Contacts.html">Контакты</a>
+    <a href="#" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">↑ Наверх</a>
+</footer>
+
+    <script>
+        const API = 'http://localhost:8080/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            try {
+                const res = await fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('volanchiki_user', JSON.stringify({
+                        id: data.userId,
+                        fullName: data.fullName,
+                        nickname: data.nickname,
+                        role: data.role
+                    }));
+                    localStorage.setItem('isLoggedIn', 'true');
+                    successMsg.textContent = '✅ Вход выполнен! Переадресация...';
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = data.role === 'ORGANIZER' ? 'orglist.html' : 'profile.html';
+                    }, 1000);
+                } else {
+                    const text = await res.text();
+                    errorMsg.textContent = '❌ ' + (text || 'Неверный email или пароль');
+                    errorMsg.style.display = 'block';
+                }
+            } catch (e) {
+                // Fallback localStorage
+                const saved = localStorage.getItem('volanchiki_user');
+                if (saved) {
+                    const user = JSON.parse(saved);
+                    if (user.email === email && user.password === password) {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        successMsg.textContent = '✅ Вход выполнен (локально)!';
+                        successMsg.style.display = 'block';
+                        setTimeout(() => { window.location.href = 'profile.html'; }, 1000);
+                        return;
+                    }
+                }
+                errorMsg.textContent = '❌ Сервер недоступен. Проверьте данные или попробуйте позже.';
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

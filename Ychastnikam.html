@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Участникам - Volanchiki</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #bfbfdb;
+            min-height: 100vh;
+        }
+
+        /* НАВБАР - АДАПТИВНЫЙ */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo-link img {
+            max-width: 100%;
+            height: auto;
+            width: 300px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #0b0829;
+            font-weight: 500;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #667eea;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            padding: 0.6rem 1.5rem;
+            display: block;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .dropdown-menu a:hover {
+            background: #bfbfdb;
+            padding-left: 2rem;
+        }
+
+        .menu-icon {
+            margin-right: 8px;
+        }
+
+        .lk-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lk-button {
+            font-size: 18px;
+            display: inline-block;
+            background: #0b0829;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: white;
+            cursor: default;
+            transition: all 0.3s;
+        }
+
+        .lk-dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 180px;
+            border-radius: 5px;
+            padding: 8px 0;
+            z-index: 1000;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .lk-wrapper:hover .lk-dropdown {
+            display: block;
+        }
+
+        .lk-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.3s;
+        }
+
+        .lk-dropdown a:hover {
+            background: #f5f5f5;
+            padding-left: 20px;
+        }
+
+        /* Основной контент */
+        .content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Hero секция */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 50px 40px;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Карточки */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Аккордеон */
+        .accordion-header {
+            cursor: pointer;
+            background-color: #f1f1f1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .accordion-header:hover {
+            background-color: #e8e8e8;
+        }
+
+        .accordion-content {
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .accordion-content h6 {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .accordion-content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+            display: inline-block;
+            float: right;
+            color: #ff8400;
+        }
+
+        .badge-list {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .badge {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .nav-menu {
+                justify-content: center;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- НАВБАР -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="Glavnay.html" class="logo-link">
+            <img src="logo.jpg" alt="Логотип" width="400" height="150">
+        </a>
+        <ul class="nav-menu">
+            <li><a href="Glavnay.html">Главная</a></li>
+            <li><a href="Kalendar.html">Календарь</a></li>
+            <li class="dropdown">
+                <a href="#">Игроки ▾</a>
+                <div class="dropdown-menu">
+                    <a href="ОдинИгрок.html"><span class="menu-icon">😎</span> Одиночный</a>
+                    <a href="ПарИгрок.html"><span class="menu-icon">👭</span> Парный</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Информация ▾</a>
+                <div class="dropdown-menu">
+                    <a href="Ychastnikam.html"><span class="menu-icon">🏸</span> Участникам</a>
+                    <a href="Organizatoram.html"><span class="menu-icon">📋</span> Организаторам</a>
+                </div>
+            </li>
+        </ul>
+        <div class="lk-wrapper">
+            <span class="lk-button">Личный кабинет ▾</span>
+            <div class="lk-dropdown">
+                <a href="vxod.html"><span>🔑</span> Вход</a>
+                <a href="reg.html"><span>📝</span> Регистрация</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ОСНОВНОЙ КОНТЕНТ -->
+<div class="content">
+    <!-- Hero блок -->
+    <div class="hero">
+        <h1>Участникам</h1>
+        <p>Регистрируйтесь на турниры, повышайте рейтинг и побеждайте!</p>
+    </div>
+
+    <!-- Карточки -->
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon">🏸</div>
+            <h3>Участвуйте в турнирах</h3>
+            <p>Выбирайте соревнования по душе и регистрируйтесь онлайн. Удобный поиск по городу, датам и разрядам.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Следите за рейтингом</h3>
+            <p>Прозрачная система рейтинга ЛАБ позволяет отслеживать прогресс и сравнивать свои успехи с другими.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">👥</div>
+            <h3>Находите партнёров</h3>
+            <p>Ищите напарников для парных разрядов (MD, WD, XD) прямо на сайте и составляйте пары.</p>
+        </div>
+    </div>
+
+    <!-- Аккордеон -->
+    <h3 style="font-size: 24px; margin-bottom: 20px; color: #333;">Руководство для участников</h3>
+
+    <h5 class="accordion-header" onclick="toggleAccordion('about', this)">
+        О сайте
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="about" class="accordion-content">
+        <p><strong>Volanchiki</strong> — это единая база любительских турниров по бадминтону в Москве и других городах России.</p>
+        <p>На сайте доступна онлайн-регистрация на соревнования, а также информация про прошедшие турниры и рейтинг игроков.</p>
+        <p>Хотите участвовать в турнирах? Зарегистрируйтесь, выберите турнир и подайте заявку онлайн. Соревнуйтесь с друзьями и занимайте высшие места в рейтинге!</p>
+    </div>
+
+    <h5 class="accordion-header" onclick="toggleAccordion('registration', this)">
+        Регистрация участника на Volanchiki
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="registration" class="accordion-content">
+        <p><strong>Шаг 1.</strong> Перейдите в «Личный кабинет» на сайте и выберите «Регистрация». Заполните ФИО и контакты.</p>
+        <p><strong>Шаг 2.</strong> Зарегистрируйтесь на <a href="#">volanchiki.ru</a>, затем вставьте ссылку на свой профиль в разделе «Профиль».</p>
+        <p><em>*Связка профилей возможна после участия в рейтинговом турнире. Без рейтинга — участвуйте в допущенных турнирах, чтобы получить начальный рейтинг.</em></p>
+    </div>
+
+    <h5 class="accordion-header" onclick="toggleAccordion('participation', this)">
+        Как принять участие в турнире
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="participation" class="accordion-content">
+        <p>Авторизуйтесь, выберите турнир и подайте заявку на странице «Онлайн-регистрация».</p>
+        <p>Для парной игры — используйте «Составить пару» на странице турнира.</p>
+        <p>Удобный фильтр позволяет искать турниры по дате, разряду, группе, рейтингу и городу.</p>
+        <p><strong>Разряды:</strong> MS, WS, MD, WD, XD</p>
+        <p><strong>Категории:</strong> A, B, C, D, E, F, G</p>
+    </div>
+
+    <h5 class="accordion-header" onclick="toggleAccordion('rating', this)">
+        Рейтинг ЛАБ
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="rating" class="accordion-content">
+        <p>Во вкладке «Рейтинг» можно рассчитать средний рейтинг пары и проверить допуск.</p>
+        <p>Введите фамилии игроков — программа подскажет средний рейтинг и проверит соответствие турниру.</p>
+        <p>Во вкладке «История рейтинга» — изменения после турниров.</p>
+        <p><strong>Формула расчета дельты:</strong> Дельта = (100 - (РВ - РП)) / 10</p>
+        <p>При разнице > 100 — дельта = 0. Стартовый рейтинг нового игрока — минимум 100.</p>
+    </div>
+
+    <h5 class="accordion-header" onclick="toggleAccordion('organizer', this)">
+        Я хочу проводить соревнования в своём городе. Как мне добавить турнир?
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="organizer" class="accordion-content">
+        <p>Необходимо зарегистрироваться как «Организатор» и зайти в «Личный кабинет».</p>
+        <p>В Личном кабинете Организатора можно подать заявку на регистрацию соревнований.</p>
+        <p>В течение трёх дней на почту придёт ответ о заявке. После чего можно добавлять турнир в Календарь!</p>
+    </div>
+
+    <h5 class="accordion-header" onclick="toggleAccordion('faq', this)">
+        Часто задаваемые вопросы
+        <span class="arrow">▼</span>
+    </h5>
+    <div id="faq" class="accordion-content">
+        <h6>❓ У меня не получается связать профили Volanchiki</h6>
+        <p>Если у вас нет рейтинга, примите участие в рейтинговом турнире и получите его. После этого можно будет связать аккаунты.</p>
+
+        <h6>❓ Хочу заявиться на соревнования без рейтинга</h6>
+        <p>Обычно участвуют только спортсмены с рейтингом. Без рейтинга можно участвовать по специальным условиям, описанным в положении турнира. Также существуют турниры для получения стартового рейтинга.</p>
+    </div>
+
+    <p style="margin-top: 30px; padding: 15px; background: #f8f9ff; border-radius: 10px;">
+        <strong>Остались вопросы?</strong> Обращайтесь в Поддержку по электронной почте 
+        <a href="mailto:volanchiki@gmail.com">volanchiki@gmail.com</a> — всегда поможем!
+    </p>
+</div>
+
